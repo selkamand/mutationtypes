@@ -33,7 +33,7 @@ You can install the development version of mutationtypes like so:
 
 ``` r
 # install.packages('remotes')
-remotes::install_github('selkamand/mutation_types.R')
+remotes::install_github('selkamand/mutationtypes')
 ```
 
 ## Usage
