@@ -20,32 +20,32 @@ test_that("mutation_types_convert_so_to_maf works", {
   )
 
   expect_error(
-    mutation_types_convert_so_to_maf(so_terms[1], verbose = FALSE),
+    mutation_types_convert_so_to_maf(so_terms[1], verbose = TRUE) |> suppressMessages(),
     NA
   )
 
   expect_error(
-    mutation_types_convert_so_to_maf(so_terms, verbose = FALSE),
+    mutation_types_convert_so_to_maf(so_terms, verbose = TRUE) |> suppressMessages(),
     NA
   )
 
   expect_type(
-    mutation_types_convert_so_to_maf(so_terms, verbose = FALSE),
+    mutation_types_convert_so_to_maf(so_terms, verbose = TRUE) |> suppressMessages(),
     "character"
   )
 
   expect_length(
-    mutation_types_convert_so_to_maf(so_terms, verbose = FALSE),
+    mutation_types_convert_so_to_maf(so_terms, verbose = TRUE) |> suppressMessages(),
     n=length(so_terms)
   )
 
   expect_equal(
-    mutation_types_convert_so_to_maf("missense_variant", verbose = FALSE),
+    mutation_types_convert_so_to_maf("missense_variant", verbose = TRUE) |> suppressMessages(),
     "Missense_Mutation"
   )
 
   expect_error(
-    mutation_types_convert_so_to_maf("protein_altering_variant", verbose = FALSE),
+    mutation_types_convert_so_to_maf("protein_altering_variant", verbose = TRUE) |> suppressMessages(),
     "mapping.*protein_altering_variant"
   )
 })

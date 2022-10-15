@@ -12,6 +12,8 @@ mutation_types_mapping_so_to_maf <- function(){
   return(df)
 }
 
+# Exposed Functions -------------------------------------------------------
+
 #' Dictionary of So terms
 #'
 #' @return valid SO terms (character)
@@ -85,9 +87,6 @@ so_terms_without_mapping <- function(){
   so2maf_df <- mutation_types_mapping_so_to_maf()
   stats::na.omit(unique(so2maf_df[['SO']][is.na(so2maf_df[['MAF']])]))
 }
-
-
-# Exposed Functions -------------------------------------------------------
 
 #' Convert SO Mutation Types to MAF
 #'
@@ -192,7 +191,7 @@ mutation_types_identify <- function(mutation_types, verbose = TRUE){
 
   if(n_so_classified_mutations == n_uniq_mutation_types) return('SO')
   else if(n_maf_classified_mutations == n_uniq_mutation_types) return('MAF')
-  else return('Unknown')
+  else return('UNKNOWN')
 }
 
 
