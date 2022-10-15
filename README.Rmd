@@ -71,8 +71,11 @@ mutation_types_convert_so_to_maf(
   )
 )
 
-# Get list of valid MAF/SO terms
+# Get list of valid MAF terms
 mutation_types_maf()
+
+# Get list of valid SO terms
+mutation_types_so()
 
 # Get Palettes for MAF/SO terms
 mutation_types_maf_palette()
