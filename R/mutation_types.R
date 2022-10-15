@@ -12,13 +12,74 @@ mutation_types_mapping_so_to_maf <- function(){
   return(df)
 }
 
+#' Dictionary of So terms
+#'
+#' @return valid SO terms (character)
+#' @export
+#'
+#' @examples
+#' mutation_types_so()
 mutation_types_so <- function(){
-  stats::na.omit(unique(mutation_types_mapping_so_to_maf()[['SO']]))
+  utils::read.csv(
+    file = system.file('so_terms.tsv', package = "mutationtypes"),
+    header = TRUE,
+    sep = "\t"
+  )[['Terms']]
 }
 
+#' Dictionary of MAF terms
+#'
+#' @return valid MAF terms (character)
+#' @export
+#'
+#' @examples
+#' mutation_types_maf()
 mutation_types_maf <- function(){
-  stats::na.omit(unique(mutation_types_mapping_so_to_maf()[['MAF']]))
+ utils::read.csv(
+    file = system.file('maf_terms.tsv', package = "mutationtypes"),
+    header = TRUE,
+    sep = "\t"
+  )[['Terms']]
+  #stats::na.omit(unique(mutation_types_mapping_so_to_maf()[['MAF']]))
 }
+
+#' Palettes: MAF
+#'
+#' @return named vector. Names are MAF terms. Values are colors
+#' @export
+#'
+#' @examples
+#' mutation_types_maf_palette()
+mutation_types_maf_palette <- function(){
+  df <- utils::read.csv(
+    file = system.file('maf_terms.tsv', package = "mutationtypes"),
+    header = TRUE,
+    sep = "\t"
+  )
+  pal <- df[['Palette']]
+  names(pal) <- df[['Terms']]
+  return(pal)
+}
+
+#' Palettes: SO
+#'
+#' @return named vector. Names are SO terms. Values are colors
+#' @export
+#'
+#' @examples
+#' mutation_types_so_palette()
+mutation_types_so_palette <- function(){
+   df <- utils::read.csv(
+     file = system.file('so_terms.tsv', package = "mutationtypes"),
+     header = TRUE,
+     sep = "\t"
+ )
+
+ pal <- df[['Palette']]
+ names(pal) <- df[['Terms']]
+ return(pal)
+}
+
 
 so_terms_without_mapping <- function(){
   so2maf_df <- mutation_types_mapping_so_to_maf()
@@ -131,3 +192,5 @@ mutation_types_identify <- function(mutation_types, verbose = TRUE){
   else if(n_maf_classified_mutations == n_uniq_mutation_types) return('MAF')
   else return('Unknown')
 }
+
+

@@ -2,3 +2,7 @@
 
 export(mutation_types_convert_so_to_maf)
 export(mutation_types_identify)
+export(mutation_types_maf)
+export(mutation_types_maf_palette)
+export(mutation_types_so)
+export(mutation_types_so_palette)

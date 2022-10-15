@@ -12,7 +12,6 @@ transcript_amplification	Intron
 inframe_insertion	In_Frame_Ins
 inframe_deletion	In_Frame_Del
 missense_variant	Missense_Mutation
-protein_altering_variant	
 splice_region_variant	Splice_Region
 splice_donor_5th_base_variant	Splice_Region
 splice_donor_region_variant	Splice_Region
@@ -50,3 +49,4 @@ nc_transcript_variant	RNA
 5_prime_UTR_premature_start_codon_gain_variant	5'UTR
 regulatory_region	IGR
 intergenic_region	IGR
+protein_altering_variant	

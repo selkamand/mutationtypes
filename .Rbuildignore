@@ -2,3 +2,6 @@
 ^\.Rproj\.user$
 ^mutationtypes\.Rproj$
 ^README\.Rmd$
+.pptx$
+^\.github$
+^codecov\.yml$

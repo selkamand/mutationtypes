@@ -13,11 +13,13 @@ knitr::opts_chunk$set(
 )
 ```
 
-# mutationtypes
+# mutationtypes <img src="man/figures/logo.png" align="right" height="108" />
 
 <!-- badges: start -->
 [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 [![CRAN status](https://www.r-pkg.org/badges/version/mutationtypes)](https://CRAN.R-project.org/package=mutationtypes)
+[![R-CMD-check](https://github.com/selkamand/mutationtypes/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/selkamand/mutationtypes/actions/workflows/R-CMD-check.yaml)
+[![Codecov test coverage](https://codecov.io/gh/selkamand/mutationtypes/branch/master/graph/badge.svg)](https://app.codecov.io/gh/selkamand/mutationtypes?branch=master)
 <!-- badges: end -->
 
 Say you want to describe the impact of a mutation. There exists several dictionaries you could use, including
@@ -42,7 +44,7 @@ remotes::install_github('selkamand/mutation_types.R')
 
 ## Usage
 
-```{r example}
+```{r usage}
 library(mutationtypes)
 
 # Check which mutation impact dictionary you're vector is closest too
@@ -69,5 +71,9 @@ mutation_types_convert_so_to_maf(
   )
 )
 
-# Check what 
+# Get list of valid MAF/SO terms
+mutation_types_maf()
+
+# Get Palettes for MAF/SO terms
+mutation_types_maf_palette()
 ```

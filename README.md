@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# mutationtypes
+# mutationtypes <img src="man/figures/logo.png" align="right" height="108" />
 
 <!-- badges: start -->
 
@@ -9,6 +9,9 @@
 experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 [![CRAN
 status](https://www.r-pkg.org/badges/version/mutationtypes)](https://CRAN.R-project.org/package=mutationtypes)
+[![R-CMD-check](https://github.com/selkamand/mutationtypes/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/selkamand/mutationtypes/actions/workflows/R-CMD-check.yaml)
+[![Codecov test
+coverage](https://codecov.io/gh/selkamand/mutationtypes/branch/master/graph/badge.svg)](https://app.codecov.io/gh/selkamand/mutationtypes?branch=master)
 <!-- badges: end -->
 
 Say you want to describe the impact of a mutation. There exists several
@@ -74,5 +77,27 @@ mutation_types_convert_so_to_maf(
 #> [1] "Intron"            "Intron"            "IGR"              
 #> [4] "Nonstop_Mutation"  "Missense_Mutation" "Missense_Mutation"
 
-# Check what 
+# Get list of valid MAF/SO terms
+mutation_types_maf()
+#>  [1] "Splice_Site"            "Nonsense_Mutation"      "Frame_Shift_Del"       
+#>  [4] "In_Frame_Ins"           "In_Frame_Del"           "Missense_Mutation"     
+#>  [7] "Splice_Region"          "Intron"                 "Nonstop_Mutation"      
+#> [10] "Translation_Start_Site" "Silent"                 "RNA"                   
+#> [13] "5'UTR"                  "3'UTR"                  "5'Flank"               
+#> [16] "3'Flank"                "Targeted_Region"        "IGR"
+
+# Get Palettes for MAF/SO terms
+mutation_types_maf_palette()
+#>            Splice_Site      Nonsense_Mutation        Frame_Shift_Del 
+#>              "#33A02C"              "#FB9A99"              "#E31A1C" 
+#>           In_Frame_Ins           In_Frame_Del      Missense_Mutation 
+#>              "#CAB2D6"              "#6A3D9A"              "#1F78B4" 
+#>          Splice_Region                 Intron       Nonstop_Mutation 
+#>              "#B2DF8A"              "#FDBF6F"              "#A6CEE3" 
+#> Translation_Start_Site                 Silent                    RNA 
+#>              "#B15928"              "#FDBF6F"              "#FDBF6F" 
+#>                  5'UTR                  3'UTR                5'Flank 
+#>              "#FDBF6F"              "#FDBF6F"              "#FDBF6F" 
+#>                3'Flank        Targeted_Region                    IGR 
+#>              "#FDBF6F"              "#FDBF6F"              "#FDBF6F"
 ```
