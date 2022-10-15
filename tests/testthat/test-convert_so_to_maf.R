@@ -1,7 +1,7 @@
 test_that("mutation_types_convert_so_to_maf works", {
 
   so_terms <- c("transcript_ablation","transcript_ablation", "transcript_ablation", "splice_acceptor_variant", "splice_donor_variant",
-    "exon_loss_variant", "stop_gained", "frameshift_variant", "stop_lost",
+    "exon_loss_variant", "stop_gained", "stop_lost",
     "start_lost", "initiator_codon_variant", "transcript_amplification",
     "inframe_insertion", "inframe_deletion", "missense_variant",
     "splice_region_variant", "splice_donor_5th_base_variant", "splice_donor_region_variant",
@@ -47,5 +47,10 @@ test_that("mutation_types_convert_so_to_maf works", {
   expect_error(
     mutation_types_convert_so_to_maf("protein_altering_variant", verbose = TRUE) |> suppressMessages(),
     "mapping.*protein_altering_variant"
+  )
+
+  expect_error(
+    mutation_types_convert_so_to_maf("frameshift_variant", verbose = TRUE) |> suppressMessages(),
+    "mapping.*frameshift_variant"
   )
 })

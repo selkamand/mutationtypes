@@ -4,7 +4,7 @@ splice_acceptor_variant	Splice_Site
 splice_donor_variant	Splice_Site
 exon_loss_variant	Splice_Site
 stop_gained	Nonsense_Mutation
-frameshift_variant	Frame_Shift_Del
+frameshift_variant	
 stop_lost	Nonstop_Mutation
 start_lost	Translation_Start_Site
 initiator_codon_variant	Translation_Start_Site

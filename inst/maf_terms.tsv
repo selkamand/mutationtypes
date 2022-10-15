@@ -2,6 +2,7 @@ Terms	Palette
 Splice_Site	#33A02C
 Nonsense_Mutation	#FB9A99
 Frame_Shift_Del	#E31A1C
+Frame_Shift_Ins	#E31A1C
 In_Frame_Ins	#CAB2D6
 In_Frame_Del	#6A3D9A
 Missense_Mutation	#1F78B4
