@@ -92,14 +92,15 @@ so_terms_without_mapping <- function(){
 #' Convert SO Mutation Types to MAF
 #'
 #' @param so_mutation_types a vector of SO terms you want to convert to MAF variant classifications
-#'
+#' @param verbose verbose (flag)
 #' @return matched MAF variant classification terms (character)
 #' @export
 #'
 #' @examples
 #' mutation_types_convert_so_to_maf(c('INTRAGENIC', 'INTRAGENIC', 'intergenic_region'))
 mutation_types_convert_so_to_maf <- function(so_mutation_types, verbose = TRUE){
-  assertthat::assert_that(is.character(so_mutation_types))
+  if(!is.character(so_mutation_types)) cli::cli_abort('so_mutation_types must be a character vector, not {class(so_mutation_types)}')
+
   so_mutation_types_uniq <- unique(so_mutation_types)
 
   if(verbose) cli::cli_h1('Validating Input')
@@ -138,7 +139,7 @@ mutation_types_convert_so_to_maf <- function(so_mutation_types, verbose = TRUE){
 #' Identify Mutation Dictionary Used
 #'
 #' @param mutation_types mutation types to test (character)
-#' @param verbose verbosity level (flag)
+#' @param verbose verbose (flag)
 #'
 #' @return one of c('SO', 'MAF', 'UNKNOWN').
 #' Will return 'UNKNOWN' unless ALL mutation types fit with one of the supported dictionaries
@@ -149,8 +150,9 @@ mutation_types_convert_so_to_maf <- function(so_mutation_types, verbose = TRUE){
 mutation_types_identify <- function(mutation_types, verbose = TRUE){
 
   # assertions
-  assertthat::assert_that(is.character(mutation_types))
-  assertthat::assert_that(assertthat::is.flag(verbose))
+  if(!is.character(mutation_types)) cli::cli_abort('mutation_types must be a character vector, not {class(mutation_types)}')
+  if(!(is.logical(verbose) & length(verbose) == 1)) cli::cli_abort('{.arg verbose} must be a flag, not a {class(verbose)}')
+
 
   # Count unique mutation types
   uniq_mutation_types <- unique(mutation_types)

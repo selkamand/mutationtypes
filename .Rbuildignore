@@ -5,3 +5,4 @@
 .pptx$
 ^\.github$
 ^codecov\.yml$
+^LICENSE\.md$

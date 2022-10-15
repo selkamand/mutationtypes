@@ -1,12 +1,11 @@
 Package: mutationtypes
-Title: What the Package Does (One Line, Title Case)
+Title: Utilities for Ensuring Language Describing Mutational Impact Aligns with 'SO' or 'MAF' dictionaries
 Version: 0.0.0.9000
 Authors@R: 
-    person("First", "Last", , "first.last@example.com", role = c("aut", "cre"),
+    person("Sam", "El-Kamand", , "sam.elkamand@gmail.com", role = c("aut", "cre", "cph"),
            comment = c(ORCID = "YOUR-ORCID-ID"))
-Description: What the package does (one paragraph).
-License: `use_mit_license()`, `use_gpl3_license()` or friends to pick a
-    license
+Description: Check concordance of a vector of mutation impacts with 'SO' or 'MAF' dictionaries. Can also convert SO terms to MAF term.
+License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.0

@@ -8,6 +8,8 @@ mutation_types_convert_so_to_maf(so_mutation_types, verbose = TRUE)
 }
 \arguments{
 \item{so_mutation_types}{a vector of SO terms you want to convert to MAF variant classifications}
+
+\item{verbose}{verbose (flag)}
 }
 \value{
 matched MAF variant classification terms (character)

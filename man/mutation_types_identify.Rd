@@ -9,7 +9,7 @@ mutation_types_identify(mutation_types, verbose = TRUE)
 \arguments{
 \item{mutation_types}{mutation types to test (character)}
 
-\item{verbose}{verbosity level (flag)}
+\item{verbose}{verbose (flag)}
 }
 \value{
 one of c('SO', 'MAF', 'UNKNOWN').
