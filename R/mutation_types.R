@@ -109,8 +109,10 @@ so_terms_without_mapping <- function(){
 #'
 #' @examples
 #' mutation_types_convert_so_to_maf(c('INTRAGENIC', 'INTRAGENIC', 'intergenic_region'))
-mutation_types_convert_so_to_maf <- function(so_mutation_types, split_on_ampersand = TRUE, verbose = TRUE){
-  if(!is.character(so_mutation_types)) cli::cli_abort('so_mutation_types must be a character vector, not {class(so_mutation_types)}')
+mutation_types_convert_so_to_maf <- function(so_mutation_types, variant_type = NULL, inframe = NULL, split_on_ampersand = TRUE, verbose = TRUE){
+
+  # Assertions
+  assertions::assert_character(so_mutation_types)
 
   if(split_on_ampersand)
     so_mutation_types <- select_most_severe_consequence_so(strsplit(so_mutation_types, '&'))
@@ -120,33 +122,69 @@ mutation_types_convert_so_to_maf <- function(so_mutation_types, split_on_ampersa
   if(verbose) cli::cli_h1('Validating Input')
 
   # Check input mutation types are valid so terms
-  if(!all(so_mutation_types_uniq %in% mutation_types_so())){
-    missing <- so_mutation_types_uniq[!so_mutation_types_uniq %in% mutation_types_so()]
-    names(missing) <- rep('>', times = length(missing))
-    cli::cli_abort(c(
-      "The following are not valid so mutation classification terms: ",
-      missing,'',
-      '!'= "Please ensure all so_mutation_types are in {.code mutation_types_so()}"
-      ))
-  }
+  assert_all_mutations_are_valid_so(so_mutation_types_uniq)
 
   if(verbose) cli::cli_alert_success('Supplied mutation types are valid so terms')
   so2maf_df <- mutation_types_mapping_so_to_maf()
 
-  # Check all terms have a valid mapping partner
-  terms_without_valid_mapping <- so_mutation_types_uniq[so_mutation_types_uniq %in% so_terms_without_mapping()]
-  if(length(terms_without_valid_mapping) > 0){
-   cli::cli_abort(
-     "Could not find a valid mapping for term{?s}: [{.strong {terms_without_valid_mapping}}].
-     This is typically because the term is too high-level to be unambiguously converted to a lower-level MAF term.
-     Consider converting this term to a more specific mutation type before running it through this script.
-     You will have to do this on your own")
+  valid_variant_types = c("SNP", "DNP", "TNP", "ONP", "DEL", "INS")
+  if("frameshift_variant" %in% so_mutation_types){
+    # Require just variant_type and inframe to be supplied
+    assertions::assert(
+      !is.null(variant_type),
+      msg = "To convert SO term {.strong frameshift_variant} to a MAF variant classification, you must supply argument {.arg variant_type}"
+    )
+
+    # assert variant_type
+    assertions::assert_character(variant_type)
+    assertions::assert_equal(length(variant_type), length(so_mutation_types))
+    assertions::assert(all(variant_type %in% valid_variant_types), msg = "Invalid {.arg variant_type} values found ({unique(variant_type[!variant_type %in% valid_variant_types])}). Valid terms include {valid_variant_types}")
+
+    if(!is.null(inframe)){
+     assertions::assert(all(inframe[so_mutation_types == "frameshift_variant"]), msg = "Cannot have a frameshift_variant with inframe status: [{.strong {unique(inframe[so_mutation_types == 'frameshift_variant' & inframe])}}]. Must be TRUE. Either the variant classification or the inframe status must be incorrect")
+    }
+    incorrect_variant_types <- unique(variant_type[!variant_type[so_mutation_types=="frameshift_variant"] %in% c("INS", "DEL")])
+    assertions::assert(
+      length(incorrect_variant_types) == 0,
+      msg = "Variant Type must be {.strong INS} or {.strong DEL} when so_mutation_type is 'frameshift_variant'. Not [{incorrect_variant_types}]"
+    )
+
   }
-  if(verbose) cli::cli_alert_success('All input SO terms have valid mappings to MAF terms')
+  if("protein_altering_variant" %in% so_mutation_types){
+    # Require both variant_type and inframe to be supplied
+    assertions::assert(!is.null(variant_type) & !is.null(inframe), msg = "To convert SO term {.strong protein_altering_variant} to a MAF variant classification, you must supply arguments {.arg variant_type} and {.arg inframe}")
 
+    # assert inframe
+    assertions::assert_logical(inframe)
+    assertions::assert_equal(length(inframe), length(so_mutation_types))
+    assertions::assert(all(unique(inframe[so_mutation_types=="protein_altering_variant"]) %in% c(TRUE, FALSE)))
 
-  # Map input across
-  so2maf_df[['MAF']][match(so_mutation_types, so2maf_df[['SO']])]
+    # assert variant_type
+    assertions::assert_character(variant_type)
+    assertions::assert_equal(length(variant_type), length(so_mutation_types))
+    assertions::assert(all(variant_type %in% valid_variant_types), msg = "Invalid {.arg variant_type} values found ({unique(variant_type[!variant_type %in% valid_variant_types])}). Valid terms include {valid_variant_types}")
+    assertions::assert(
+      all(unique(variant_type[so_mutation_types=="protein_altering_variant"]) %in% c("INS", "DEL")),
+      msg = "Variant Type must be {.strong INS} or {.strong DEL} when so_mutation_type is 'protein_altering_variant'"
+    )
+  }
+
+  #browser()
+  maf_mutation_types <- data.table::fcase(
+    !so_mutation_types %in% c("frameshift_variant", "protein_altering_variant"), so2maf_df[['MAF']][match(so_mutation_types, so2maf_df[['SO']])],
+    so_mutation_types == "frameshift_variant" & variant_type == "DEL", "Frame_Shift_Del",
+    so_mutation_types == "frameshift_variant" & variant_type == "INS", "Frame_Shift_Ins",
+    so_mutation_types == "protein_altering_variant" & variant_type == "DEL" & inframe == TRUE, "In_Frame_Del",
+    so_mutation_types == "protein_altering_variant" & variant_type == "INS" & inframe == TRUE, "In_Frame_Ins",
+    so_mutation_types == "protein_altering_variant" & variant_type == "DEL" & inframe == FALSE, "Frame_Shift_Del",
+    so_mutation_types == "protein_altering_variant" & variant_type == "INS" & inframe == FALSE, "Frame_Shift_Ins",
+
+    default=NA_character_
+    )
+
+  assertions::assert_has_no_missing_values(maf_mutation_types)
+
+  return(maf_mutation_types)
 }
 
 
@@ -173,6 +211,7 @@ mutation_types_identify <- function(mutation_types, split_on_ampersand = TRUE, v
   # (e.g. splice_donor_variant&intron_variant) are still classified correctly)
   if(split_on_ampersand)
     mutation_types <- unlist(strsplit(mutation_types, split =  "&", fixed = TRUE))
+
 
   # Count unique mutation types
   uniq_mutation_types <- unique(mutation_types)
@@ -233,8 +272,9 @@ mutation_types_identify <- function(mutation_types, split_on_ampersand = TRUE, v
 #' #> c("splice_acceptor_variant", "initiator_codon_variant")
 select_most_severe_consequence_so <- function(so_mutation_types_list){
   if(!is.list(so_mutation_types_list)) cli::cli_abort("{.strong {so_mutation_types_list}} must be a list, not a {.strong {class(so_mutation_types_list)}}")
-
   priority_mappings = mutation_types_so_with_priority()
+
+  assert_all_mutations_are_valid_so(unlist(so_mutation_types_list))
 
   vapply(
     X=so_mutation_types_list,
@@ -248,5 +288,26 @@ select_most_severe_consequence_so <- function(so_mutation_types_list){
 }
 
 
+# assert_all_mutations_are_valid_so <- assertions::assert_create(
+#   func = function(mutation_types) {
+#     unique_mutation_types <- unique(unlist(strsplit(mutation_types, split = "&")))
+#     unknown_mutation_types <- unique_mutation_types[!unique_mutation_types %in% mutation_types_so()]
+#     if(length(unique_mutation_types) > 0 ){
+#       "Found {.strong {length(unknown_mutation_types)}} mutation type{?s} which {?was/were} NOT valid SO terms: [{.strong {unknown_mutation_types}}]"
+#     }}
+# )
 
 
+assert_all_mutations_are_valid_so <- function(mutation_types){
+  unique_mutation_types <- unique(unlist(strsplit(mutation_types, split = "&")))
+  unknown_mutation_types <- unique_mutation_types[!unique_mutation_types %in% mutation_types_so()]
+  if(length(unknown_mutation_types) > 0 ){
+    cli::cli_abort(
+      c(
+        "Found {.strong {length(unknown_mutation_types)}} mutation type{?s} which {?was/were} NOT {?a/} valid SO terms: [{.strong {unknown_mutation_types}}]",
+        x = "Please ensure all mutation types are in {.code mutation_types_so()}"
+        )
+      )
+  }
+  return(invisible(TRUE))
+}

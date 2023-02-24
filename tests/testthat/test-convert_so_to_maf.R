@@ -46,14 +46,23 @@ test_that("mutation_types_convert_so_to_maf works", {
 
   expect_error(
     mutation_types_convert_so_to_maf("protein_altering_variant", verbose = TRUE) |> suppressMessages(),
-    "mapping.*protein_altering_variant"
+    "protein_altering_variant.*variant_type.*inframe"
   )
 
   expect_error(
     mutation_types_convert_so_to_maf("frameshift_variant", verbose = TRUE) |> suppressMessages(),
-    "mapping.*frameshift_variant"
+    "frameshift_variant.*variant_type"
   )
 
+  # Test conversions of frameshift_variant and protein_altering_variant
+  expect_equal(
+    mutation_types_convert_so_to_maf(
+      c("frameshift_variant", "frameshift_variant", "protein_altering_variant", "protein_altering_variant", "protein_altering_variant", "protein_altering_variant"),
+      variant_type = c("DEL", "INS", "DEL", "INS", "DEL", "INS"),
+      inframe = c(TRUE, TRUE, TRUE, TRUE, FALSE, FALSE),
+      verbose = FALSE) |> suppressMessages(),
+    c("Frame_Shift_Del", "Frame_Shift_Ins", "In_Frame_Del", "In_Frame_Ins", "Frame_Shift_Del", "Frame_Shift_Ins")
+  )
   # Test & seperated consequences are resolved correctly
   expect_equal(
     mutation_types_convert_so_to_maf("missense_variant&transcript_ablation", verbose = TRUE) |> suppressMessages(),

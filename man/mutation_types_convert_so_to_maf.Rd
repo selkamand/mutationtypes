@@ -6,6 +6,8 @@
 \usage{
 mutation_types_convert_so_to_maf(
   so_mutation_types,
+  variant_type = NULL,
+  inframe = NULL,
   split_on_ampersand = TRUE,
   verbose = TRUE
 )
