@@ -155,3 +155,8 @@ test_that("palette functions work", {
   )
 })
 
+test_that("mutation_types_so_with_priority produces a dataframe with EffectPriority sorted in ascending order", {
+  # This is VERY important for identifying the most severe SO term
+  expect_true(!is.unsorted(mutation_types_so_with_priority()[["EffectPriority"]]))
+})
+

@@ -1,52 +1,52 @@
-Terms	Palette
-transcript_ablation	#33A02C
-splice_acceptor_variant	#33A02C
-splice_donor_variant	#33A02C
-exon_loss_variant	#33A02C
-stop_gained	#FB9A99
-frameshift_variant	#E31A1C
-stop_lost	#A6CEE3
-start_lost	#B15928
-initiator_codon_variant	#B15928
-transcript_amplification	#FDBF6F
-inframe_insertion	#CAB2D6
-inframe_deletion	#6A3D9A
-missense_variant	#1F78B4
-splice_region_variant	#B2DF8A
-splice_donor_5th_base_variant	#B2DF8A
-splice_donor_region_variant	#B2DF8A
-splice_polypyrimidine_tract_variant	#B2DF8A
-incomplete_terminal_codon_variant	#FDBF6F
-start_retained_variant	#FDBF6F
-stop_retained_variant	#FDBF6F
-synonymous_variant	#FDBF6F
-coding_sequence_variant	#1F78B4
-conservative_missense_variant	#1F78B4
-rare_amino_acid_variant	#1F78B4
-INTRAGENIC	#FDBF6F
-intragenic_variant	#FDBF6F
-mature_miRNA_variant	#FDBF6F
-5_prime_UTR_variant	#FDBF6F
-3_prime_UTR_variant	#FDBF6F
-non_coding_transcript_exon_variant	#FDBF6F
-intron_variant	#FDBF6F
-NMD_transcript_variant	#FDBF6F
-non_coding_transcript_variant	#FDBF6F
-upstream_gene_variant	#FDBF6F
-downstream_gene_variant	#FDBF6F
-TFBS_ablation	#FDBF6F
-TFBS_amplification	#FDBF6F
-TF_binding_site_variant	#FDBF6F
-regulatory_region_ablation	#FDBF6F
-regulatory_region_amplification	#FDBF6F
-feature_elongation	#FDBF6F
-regulatory_region_variant	#FDBF6F
-feature_truncation	#FDBF6F
-intergenic_variant	#FDBF6F
-exon_variant	#FDBF6F
-non_coding_exon_variant	#FDBF6F
-nc_transcript_variant	#FDBF6F
-5_prime_UTR_premature_start_codon_gain_variant	#FDBF6F
-regulatory_region	#FDBF6F
-intergenic_region	#FDBF6F
-protein_altering_variant	#FDBF6F
+Terms	Palette	EffectPriority
+transcript_ablation	#33A02C	1
+exon_loss_variant	#33A02C	1
+splice_acceptor_variant	#33A02C	2
+splice_donor_variant	#33A02C	2
+stop_gained	#FB9A99	3
+frameshift_variant	#E31A1C	3
+stop_lost	#A6CEE3	3
+start_lost	#B15928	4
+initiator_codon_variant	#B15928	4
+inframe_insertion	#CAB2D6	5
+inframe_deletion	#6A3D9A	5
+protein_altering_variant	#FDBF6F	5
+missense_variant	#1F78B4	6
+conservative_missense_variant	#1F78B4	6
+rare_amino_acid_variant	#1F78B4	6
+transcript_amplification	#FDBF6F	7
+splice_region_variant	#B2DF8A	8
+splice_donor_5th_base_variant	#B2DF8A	8
+splice_donor_region_variant	#B2DF8A	8
+splice_polypyrimidine_tract_variant	#B2DF8A	8
+start_retained_variant	#FDBF6F	9
+stop_retained_variant	#FDBF6F	9
+synonymous_variant	#FDBF6F	9
+incomplete_terminal_codon_variant	#FDBF6F	10
+coding_sequence_variant	#1F78B4	11
+mature_miRNA_variant	#FDBF6F	11
+exon_variant	#FDBF6F	11
+5_prime_UTR_variant	#FDBF6F	12
+3_prime_UTR_variant	#FDBF6F	12
+5_prime_UTR_premature_start_codon_gain_variant	#FDBF6F	12
+non_coding_transcript_exon_variant	#FDBF6F	13
+non_coding_exon_variant	#FDBF6F	13
+INTRAGENIC	#FDBF6F	14
+intragenic_variant	#FDBF6F	14
+intron_variant	#FDBF6F	14
+non_coding_transcript_variant	#FDBF6F	14
+nc_transcript_variant	#FDBF6F	14
+NMD_transcript_variant	#FDBF6F	15
+upstream_gene_variant	#FDBF6F	16
+downstream_gene_variant	#FDBF6F	16
+TFBS_ablation	#FDBF6F	17
+TFBS_amplification	#FDBF6F	17
+TF_binding_site_variant	#FDBF6F	17
+regulatory_region_ablation	#FDBF6F	17
+regulatory_region_amplification	#FDBF6F	17
+regulatory_region_variant	#FDBF6F	17
+regulatory_region	#FDBF6F	17
+feature_elongation	#FDBF6F	18
+feature_truncation	#FDBF6F	18
+intergenic_variant	#FDBF6F	19
+intergenic_region	#FDBF6F	19

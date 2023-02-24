@@ -4,10 +4,16 @@
 \alias{mutation_types_convert_so_to_maf}
 \title{Convert SO Mutation Types to MAF}
 \usage{
-mutation_types_convert_so_to_maf(so_mutation_types, verbose = TRUE)
+mutation_types_convert_so_to_maf(
+  so_mutation_types,
+  split_on_ampersand = TRUE,
+  verbose = TRUE
+)
 }
 \arguments{
-\item{so_mutation_types}{a vector of SO terms you want to convert to MAF variant classifications}
+\item{so_mutation_types}{a vector of SO terms you want to convert to MAF variant classifications (character)}
+
+\item{split_on_ampersand}{should '&' separated SO terms be automatically converted to single SO terms based on highest severity? (flag)}
 
 \item{verbose}{verbose (flag)}
 }

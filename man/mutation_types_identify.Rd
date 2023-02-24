@@ -4,10 +4,16 @@
 \alias{mutation_types_identify}
 \title{Identify Mutation Dictionary Used}
 \usage{
-mutation_types_identify(mutation_types, verbose = TRUE)
+mutation_types_identify(
+  mutation_types,
+  split_on_ampersand = TRUE,
+  verbose = TRUE
+)
 }
 \arguments{
 \item{mutation_types}{mutation types to test (character)}
+
+\item{split_on_ampersand}{split mutation types in a single string separated by ampersand (&) into 2 distinct mutation type columns (flag)}
 
 \item{verbose}{verbose (flag)}
 }
