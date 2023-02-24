@@ -53,4 +53,16 @@ test_that("mutation_types_convert_so_to_maf works", {
     mutation_types_convert_so_to_maf("frameshift_variant", verbose = TRUE) |> suppressMessages(),
     "mapping.*frameshift_variant"
   )
+
+  # Test & seperated consequences are resolved correctly
+  expect_equal(
+    mutation_types_convert_so_to_maf("missense_variant&transcript_ablation", verbose = TRUE) |> suppressMessages(),
+    "Splice_Site"
+  )
+
+  # Test & seperated consequences are resolved correctly
+  expect_equal(
+    mutation_types_convert_so_to_maf(c("stop_lost&missense_variant", "stop_gained&upstream_gene_variant&downstream_gene_variant"), verbose = TRUE) |> suppressMessages(),
+    c("Nonstop_Mutation","Nonsense_Mutation")
+  )
 })

@@ -29,6 +29,17 @@ mutation_types_so <- function(){
   )[['Terms']]
 }
 
+mutation_types_so_with_priority <- function(){
+  mutation_types_so_wp <- utils::read.csv(
+    file = system.file('so_terms.tsv', package = "mutationtypes"),
+    header = TRUE,
+    sep = "\t"
+  )[c('Terms', "EffectPriority")]
+
+  mutation_types_so_wp[order(mutation_types_so_wp[["EffectPriority"]], decreasing = FALSE), , drop=FALSE]
+}
+
+
 #' Dictionary of MAF terms
 #'
 #' @return valid MAF terms (character)
@@ -90,15 +101,19 @@ so_terms_without_mapping <- function(){
 
 #' Convert SO Mutation Types to MAF
 #'
-#' @param so_mutation_types a vector of SO terms you want to convert to MAF variant classifications
+#' @param so_mutation_types a vector of SO terms you want to convert to MAF variant classifications (character)
+#' @param split_on_ampersand should '&' separated SO terms be automatically converted to single SO terms based on highest severity? (flag)
 #' @param verbose verbose (flag)
 #' @return matched MAF variant classification terms (character)
 #' @export
 #'
 #' @examples
 #' mutation_types_convert_so_to_maf(c('INTRAGENIC', 'INTRAGENIC', 'intergenic_region'))
-mutation_types_convert_so_to_maf <- function(so_mutation_types, verbose = TRUE){
+mutation_types_convert_so_to_maf <- function(so_mutation_types, split_on_ampersand = TRUE, verbose = TRUE){
   if(!is.character(so_mutation_types)) cli::cli_abort('so_mutation_types must be a character vector, not {class(so_mutation_types)}')
+
+  if(split_on_ampersand)
+    so_mutation_types <- select_most_severe_consequence_so(strsplit(so_mutation_types, '&'))
 
   so_mutation_types_uniq <- unique(so_mutation_types)
 
@@ -114,8 +129,8 @@ mutation_types_convert_so_to_maf <- function(so_mutation_types, verbose = TRUE){
       '!'= "Please ensure all so_mutation_types are in {.code mutation_types_so()}"
       ))
   }
-  if(verbose) cli::cli_alert_success('Supplied mutation types are valid so terms')
 
+  if(verbose) cli::cli_alert_success('Supplied mutation types are valid so terms')
   so2maf_df <- mutation_types_mapping_so_to_maf()
 
   # Check all terms have a valid mapping partner
@@ -200,8 +215,38 @@ mutation_types_identify <- function(mutation_types, split_on_ampersand = TRUE, v
   else return('UNKNOWN')
 }
 
-select_most_sever_consequence_so <- function(mutation_types){
+#' Select the most severe consequence (SO)
+#'
+#' @param so_mutation_types_list a list, where each element is a vector containing the set of SO terms you want to choose the most severe consequence from.
+#'
+#' @return the most severe consequence for each vector in so_mutation_types_list
+#' @export
+#'
+#' @examples
+#' select_most_severe_consequence_so(
+#'   list(
+#'      c("intergenic_variant", "feature_truncation", "splice_acceptor_variant"),
+#'      c("initiator_codon_variant", "inframe_insertion")
+#'   )
+#')
+#' #> Result:
+#' #> c("splice_acceptor_variant", "initiator_codon_variant")
+select_most_severe_consequence_so <- function(so_mutation_types_list){
+  if(!is.list(so_mutation_types_list)) cli::cli_abort("{.strong {so_mutation_types_list}} must be a list, not a {.strong {class(so_mutation_types_list)}}")
+
+  priority_mappings = mutation_types_so_with_priority()
+
+  vapply(
+    X=so_mutation_types_list,
+    FUN = function(so_mutation_types){
+      most_severe_term <- priority_mappings[priority_mappings[["Terms"]] %in% so_mutation_types,"Terms"][[1]]
+      return(most_severe_term)
+      # add test to make sure so_terms.tsv is sorted in order of EffectPriority since otherwise this doesn't work
+    },
+    FUN.VALUE = character(1))
 
 }
+
+
 
 
