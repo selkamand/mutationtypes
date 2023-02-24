@@ -103,6 +103,8 @@ so_terms_without_mapping <- function(){
 #'
 #' @param so_mutation_types a vector of SO terms you want to convert to MAF variant classifications (character)
 #' @param split_on_ampersand should '&' separated SO terms be automatically converted to single SO terms based on highest severity? (flag)
+#' @param inframe is the mutation inframe? (logical). Used to map protein_altering_variant to valid MAF columns
+#' @param variant_type a vector describing each mutations type. Valid elements include: "SNP", "DNP", "TNP", "ONP", "DEL", "INS". Used to map frameshift_variant to more specific MAF columns (character)
 #' @param verbose verbose (flag)
 #' @return matched MAF variant classification terms (character)
 #' @export

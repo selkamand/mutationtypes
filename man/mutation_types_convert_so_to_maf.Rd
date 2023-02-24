@@ -15,6 +15,10 @@ mutation_types_convert_so_to_maf(
 \arguments{
 \item{so_mutation_types}{a vector of SO terms you want to convert to MAF variant classifications (character)}
 
+\item{variant_type}{a vector describing each mutations type. Valid elements include: "SNP", "DNP", "TNP", "ONP", "DEL", "INS". Used to map frameshift_variant to more specific MAF columns (character)}
+
+\item{inframe}{is the mutation inframe? (logical). Used to map protein_altering_variant to valid MAF columns}
+
 \item{split_on_ampersand}{should '&' separated SO terms be automatically converted to single SO terms based on highest severity? (flag)}
 
 \item{verbose}{verbose (flag)}
