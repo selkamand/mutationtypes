@@ -138,6 +138,7 @@ mutation_types_convert_so_to_maf <- function(so_mutation_types, verbose = TRUE){
 #' Identify Mutation Dictionary Used
 #'
 #' @param mutation_types mutation types to test (character)
+#' @param split_on_ampersand split mutation types in a single string separated by ampersand (&) into 2 distinct mutation type columns (flag)
 #' @param verbose verbose (flag)
 #'
 #' @return one of c('SO', 'MAF', 'UNKNOWN').
@@ -146,12 +147,17 @@ mutation_types_convert_so_to_maf <- function(so_mutation_types, verbose = TRUE){
 #'
 #' @examples
 #' mutation_types_identify(c('bob', 'billy', 'missense_variant'))
-mutation_types_identify <- function(mutation_types, verbose = TRUE){
+mutation_types_identify <- function(mutation_types, split_on_ampersand = TRUE, verbose = TRUE){
 
   # assertions
   if(!is.character(mutation_types)) cli::cli_abort('mutation_types must be a character vector, not {class(mutation_types)}')
   if(!(is.logical(verbose) & length(verbose) == 1)) cli::cli_abort('{.arg verbose} must be a flag, not a {class(verbose)}')
+  if(!(is.logical(split_on_ampersand) & length(verbose) == 1))  cli::cli_abort('{.arg split_on_ampersand} must be a flag, not a {class(split_on_ampersand)}')
 
+  # Split on ampersand so multi-consequence mutation_types
+  # (e.g. splice_donor_variant&intron_variant) are still classified correctly)
+  if(split_on_ampersand)
+    mutation_types <- unlist(strsplit(mutation_types, split =  "&", fixed = TRUE))
 
   # Count unique mutation types
   uniq_mutation_types <- unique(mutation_types)
@@ -192,6 +198,10 @@ mutation_types_identify <- function(mutation_types, verbose = TRUE){
   if(n_so_classified_mutations == n_uniq_mutation_types) return('SO')
   else if(n_maf_classified_mutations == n_uniq_mutation_types) return('MAF')
   else return('UNKNOWN')
+}
+
+select_most_sever_consequence_so <- function(mutation_types){
+
 }
 
 
