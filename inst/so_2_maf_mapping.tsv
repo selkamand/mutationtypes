@@ -4,7 +4,6 @@ splice_acceptor_variant	Splice_Site
 splice_donor_variant	Splice_Site
 exon_loss_variant	Splice_Site
 stop_gained	Nonsense_Mutation
-frameshift_variant	
 stop_lost	Nonstop_Mutation
 start_lost	Translation_Start_Site
 initiator_codon_variant	Translation_Start_Site
@@ -50,3 +49,4 @@ nc_transcript_variant	RNA
 regulatory_region	IGR
 intergenic_region	IGR
 protein_altering_variant	
+frameshift_variant	
