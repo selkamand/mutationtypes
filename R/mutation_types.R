@@ -143,7 +143,8 @@ mutation_types_convert_so_to_maf <- function(so_mutation_types, variant_type = N
     assertions::assert(all(variant_type %in% valid_variant_types), msg = "Invalid {.arg variant_type} values found ({unique(variant_type[!variant_type %in% valid_variant_types])}). Valid terms include {valid_variant_types}")
 
     if(!is.null(inframe)){
-     assertions::assert(all(inframe[so_mutation_types == "frameshift_variant"]), msg = "Cannot have a frameshift_variant with inframe status: [{.strong {unique(inframe[so_mutation_types == 'frameshift_variant' & inframe])}}]. Must be TRUE. Either the variant classification or the inframe status must be incorrect")
+     inframe_status_of_frameshift_variants <- inframe[so_mutation_types == "frameshift_variant"]
+     assertions::assert(all(inframe_status_of_frameshift_variants == FALSE), msg = "Cannot have a frameshift_variant with inframe status: [{.strong {unique(inframe[so_mutation_types == 'frameshift_variant' & inframe])}}]. Must be FALSE Either the variant classification or the inframe status must be incorrect")
     }
     incorrect_variant_types <- unique(variant_type[!variant_type[so_mutation_types=="frameshift_variant"] %in% c("INS", "DEL")])
     assertions::assert(
