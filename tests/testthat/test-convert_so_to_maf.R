@@ -59,7 +59,7 @@ test_that("mutation_types_convert_so_to_maf works", {
     mutation_types_convert_so_to_maf(
       c("frameshift_variant", "frameshift_variant", "protein_altering_variant", "protein_altering_variant", "protein_altering_variant", "protein_altering_variant"),
       variant_type = c("DEL", "INS", "DEL", "INS", "DEL", "INS"),
-      inframe = c(TRUE, TRUE, TRUE, TRUE, FALSE, FALSE),
+      inframe = c(FALSE, FALSE, TRUE, TRUE, FALSE, FALSE),
       verbose = FALSE) |> suppressMessages(),
     c("Frame_Shift_Del", "Frame_Shift_Ins", "In_Frame_Del", "In_Frame_Ins", "Frame_Shift_Del", "Frame_Shift_Ins")
   )
