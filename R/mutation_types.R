@@ -185,7 +185,7 @@ mutation_types_convert_so_to_maf <- function(so_mutation_types, variant_type = N
     default=NA_character_
     )
 
-  assertions::assert_has_no_missing_values(maf_mutation_types)
+  assertions::assert_no_missing(maf_mutation_types)
 
   return(maf_mutation_types)
 }
@@ -311,6 +311,8 @@ select_most_severe_consequence_so_list <- function(so_mutation_types_list){
 #' #> Result:
 #' #> c("splice_acceptor_variant", "initiator_codon_variant")
 select_most_severe_consequence_so <- function(so_mutation_types){
+  assertions::assert_character(so_mutation_types)
+
   so_mutation_types_list  <- strsplit(so_mutation_types, split = "&")
 
   select_most_severe_consequence_so_list(so_mutation_types_list)
