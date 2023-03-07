@@ -259,6 +259,8 @@ mutation_types_identify <- function(mutation_types, split_on_ampersand = TRUE, v
 
 #' Select the most severe consequence (SO)
 #'
+#' @noRd
+#'
 #' @param so_mutation_types_list a list, where each element is a vector containing the set of SO terms you want to choose the most severe consequence from.
 #'
 #' @return the most severe consequence for each vector in so_mutation_types_list
