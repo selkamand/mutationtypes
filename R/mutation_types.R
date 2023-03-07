@@ -121,7 +121,7 @@ mutation_types_convert_so_to_maf <- function(so_mutation_types, variant_type = N
 
   so_mutation_types_uniq <- unique(so_mutation_types)
 
-  if(verbose) cli::cli_h1('Validating Input')
+  if(verbose) cli::cli_h2('Validating Input')
 
   # Check input mutation types are valid so terms
   assert_all_mutations_are_valid_so(so_mutation_types_uniq)
@@ -229,23 +229,23 @@ mutation_types_identify <- function(mutation_types, split_on_ampersand = TRUE, v
   unclassified_mutation_types <- uniq_mutation_types[! uniq_mutation_types %in% c(so_classified_mutations, maf_classified_mutations)]
 
   if(verbose){
-    cli::cli_h1('Identify Class')
+    cli::cli_h2('Identify Class')
     cli::cli_alert_info('Found {n_uniq_mutation_types} unique mutation type{?s} in input set')
     cli::cli_alert_info('{n_so_classified_mutations}/{n_uniq_mutation_types} mutation types were valid {.strong SO} terms')
     cli::cli_alert_info('{n_maf_classified_mutations}/{n_uniq_mutation_types} mutation types were valid {.strong MAF} terms')
 
     if(n_maf_classified_mutations > 0 & n_maf_classified_mutations < n_uniq_mutation_types){
-      cli::cli_h1('MAF Mutation Types')
+      cli::cli_h2('MAF Mutation Types')
       cli::cli_text("{maf_classified_mutations}")
     }
 
     if(n_so_classified_mutations > 0 & n_so_classified_mutations < n_uniq_mutation_types){
-      cli::cli_h1('SO Mutation Types')
+      cli::cli_h2('SO Mutation Types')
       cli::cli_alert("{so_classified_mutations}")
     }
 
     if(length(unclassified_mutation_types) > 0 & length(unclassified_mutation_types) < n_uniq_mutation_types){
-      cli::cli_h1('Unknown Mutation Types')
+      cli::cli_h2('Unknown Mutation Types')
       cli::cli_alert('{unclassified_mutation_types}')
     }
 
