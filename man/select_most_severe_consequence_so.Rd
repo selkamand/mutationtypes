@@ -4,23 +4,24 @@
 \alias{select_most_severe_consequence_so}
 \title{Select the most severe consequence (SO)}
 \usage{
-select_most_severe_consequence_so(so_mutation_types_list)
+select_most_severe_consequence_so(so_mutation_types)
 }
 \arguments{
-\item{so_mutation_types_list}{a list, where each element is a vector containing the set of SO terms you want to choose the most severe consequence from.}
+\item{so_mutation_types}{a character vector of SO terms, where multiple so_mutation_types per field are & delimited, and you want to choose the most severe consequence .}
 }
 \value{
-the most severe consequence for each vector in so_mutation_types_list
+the most severe consequence for each element in so_mutation_types
 }
 \description{
-Select the most severe consequence (SO)
+Take a character vector which may contain multiple so mutation types separated by '&'
+And choose only the most severe consequence
 }
 \examples{
 select_most_severe_consequence_so(
-  list(
-     c("intergenic_variant", "feature_truncation", "splice_acceptor_variant"),
-     c("initiator_codon_variant", "inframe_insertion")
-  )
+ c(
+   "intergenic_variant&feature_truncation&splice_acceptor_variant",
+   "initiator_codon_variant&inframe_insertion"
+ )
 )
 #> Result:
 #> c("splice_acceptor_variant", "initiator_codon_variant")
