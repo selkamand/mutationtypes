@@ -35,7 +35,14 @@ It also simplifies translation from one dictionary to another.
 
 ## Installation
 
-You can install the development version of mutationtypes like so:
+Install from CRAN:
+
+``` r
+install.packages("mutationtypes")
+```
+
+
+Alternatively, you can install the development version of mutationtypes like so:
 
 ``` r
 # install.packages('remotes')

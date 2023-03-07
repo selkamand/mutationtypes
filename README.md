@@ -29,7 +29,14 @@ translation from one dictionary to another.
 
 ## Installation
 
-You can install the development version of mutationtypes like so:
+Install from CRAN:
+
+``` r
+install.packages("mutationtypes")
+```
+
+Alternatively, you can install the development version of mutationtypes
+like so:
 
 ``` r
 # install.packages('remotes')
@@ -53,7 +60,8 @@ mutation_types_identify(
   )
 )
 #> 
-#> ── Identify Class ──────────────────────────────────────────────────────────────
+#> ── Identify Class ──
+#> 
 #> ℹ Found 4 unique mutation types in input set
 #> ℹ 4/4 mutation types were valid SO terms
 #> ℹ 0/4 mutation types were valid MAF terms
@@ -71,87 +79,90 @@ mutation_types_convert_so_to_maf(
   )
 )
 #> 
-#> ── Validating Input ────────────────────────────────────────────────────────────
+#> ── Validating Input ──
+#> 
 #> ✔ Supplied mutation types are valid so terms
-#> ✔ All input SO terms have valid mappings to MAF terms
 #> [1] "Intron"            "Intron"            "IGR"              
 #> [4] "Nonstop_Mutation"  "Missense_Mutation" "Missense_Mutation"
 
 # Get list of valid MAF terms
 mutation_types_maf()
 #>  [1] "Splice_Site"            "Nonsense_Mutation"      "Frame_Shift_Del"       
-#>  [4] "In_Frame_Ins"           "In_Frame_Del"           "Missense_Mutation"     
-#>  [7] "Splice_Region"          "Intron"                 "Nonstop_Mutation"      
-#> [10] "Translation_Start_Site" "Silent"                 "RNA"                   
-#> [13] "5'UTR"                  "3'UTR"                  "5'Flank"               
-#> [16] "3'Flank"                "Targeted_Region"        "IGR"
+#>  [4] "Frame_Shift_Ins"        "In_Frame_Ins"           "In_Frame_Del"          
+#>  [7] "Missense_Mutation"      "Splice_Region"          "Intron"                
+#> [10] "Nonstop_Mutation"       "Translation_Start_Site" "Silent"                
+#> [13] "RNA"                    "5'UTR"                  "3'UTR"                 
+#> [16] "5'Flank"                "3'Flank"                "Targeted_Region"       
+#> [19] "IGR"
 
 # Get list of valid SO terms
 mutation_types_so()
 #>  [1] "transcript_ablation"                           
-#>  [2] "splice_acceptor_variant"                       
-#>  [3] "splice_donor_variant"                          
-#>  [4] "exon_loss_variant"                             
+#>  [2] "exon_loss_variant"                             
+#>  [3] "splice_acceptor_variant"                       
+#>  [4] "splice_donor_variant"                          
 #>  [5] "stop_gained"                                   
 #>  [6] "frameshift_variant"                            
 #>  [7] "stop_lost"                                     
 #>  [8] "start_lost"                                    
 #>  [9] "initiator_codon_variant"                       
-#> [10] "transcript_amplification"                      
-#> [11] "inframe_insertion"                             
-#> [12] "inframe_deletion"                              
+#> [10] "inframe_insertion"                             
+#> [11] "inframe_deletion"                              
+#> [12] "protein_altering_variant"                      
 #> [13] "missense_variant"                              
-#> [14] "splice_region_variant"                         
-#> [15] "splice_donor_5th_base_variant"                 
-#> [16] "splice_donor_region_variant"                   
-#> [17] "splice_polypyrimidine_tract_variant"           
-#> [18] "incomplete_terminal_codon_variant"             
-#> [19] "start_retained_variant"                        
-#> [20] "stop_retained_variant"                         
-#> [21] "synonymous_variant"                            
-#> [22] "coding_sequence_variant"                       
-#> [23] "conservative_missense_variant"                 
-#> [24] "rare_amino_acid_variant"                       
-#> [25] "INTRAGENIC"                                    
-#> [26] "intragenic_variant"                            
-#> [27] "mature_miRNA_variant"                          
+#> [14] "conservative_missense_variant"                 
+#> [15] "rare_amino_acid_variant"                       
+#> [16] "transcript_amplification"                      
+#> [17] "splice_region_variant"                         
+#> [18] "splice_donor_5th_base_variant"                 
+#> [19] "splice_donor_region_variant"                   
+#> [20] "splice_polypyrimidine_tract_variant"           
+#> [21] "start_retained_variant"                        
+#> [22] "stop_retained_variant"                         
+#> [23] "synonymous_variant"                            
+#> [24] "incomplete_terminal_codon_variant"             
+#> [25] "coding_sequence_variant"                       
+#> [26] "mature_miRNA_variant"                          
+#> [27] "exon_variant"                                  
 #> [28] "5_prime_UTR_variant"                           
 #> [29] "3_prime_UTR_variant"                           
-#> [30] "non_coding_transcript_exon_variant"            
-#> [31] "intron_variant"                                
-#> [32] "NMD_transcript_variant"                        
-#> [33] "non_coding_transcript_variant"                 
-#> [34] "upstream_gene_variant"                         
-#> [35] "downstream_gene_variant"                       
-#> [36] "TFBS_ablation"                                 
-#> [37] "TFBS_amplification"                            
-#> [38] "TF_binding_site_variant"                       
-#> [39] "regulatory_region_ablation"                    
-#> [40] "regulatory_region_amplification"               
-#> [41] "feature_elongation"                            
-#> [42] "regulatory_region_variant"                     
-#> [43] "feature_truncation"                            
-#> [44] "intergenic_variant"                            
-#> [45] "exon_variant"                                  
-#> [46] "non_coding_exon_variant"                       
-#> [47] "nc_transcript_variant"                         
-#> [48] "5_prime_UTR_premature_start_codon_gain_variant"
-#> [49] "regulatory_region"                             
-#> [50] "intergenic_region"                             
-#> [51] "protein_altering_variant"
+#> [30] "5_prime_UTR_premature_start_codon_gain_variant"
+#> [31] "non_coding_transcript_exon_variant"            
+#> [32] "non_coding_exon_variant"                       
+#> [33] "INTRAGENIC"                                    
+#> [34] "intragenic_variant"                            
+#> [35] "intron_variant"                                
+#> [36] "non_coding_transcript_variant"                 
+#> [37] "nc_transcript_variant"                         
+#> [38] "NMD_transcript_variant"                        
+#> [39] "upstream_gene_variant"                         
+#> [40] "downstream_gene_variant"                       
+#> [41] "TFBS_ablation"                                 
+#> [42] "TFBS_amplification"                            
+#> [43] "TF_binding_site_variant"                       
+#> [44] "regulatory_region_ablation"                    
+#> [45] "regulatory_region_amplification"               
+#> [46] "regulatory_region_variant"                     
+#> [47] "regulatory_region"                             
+#> [48] "feature_elongation"                            
+#> [49] "feature_truncation"                            
+#> [50] "intergenic_variant"                            
+#> [51] "intergenic_region"
 
 # Get Palettes for MAF/SO terms
 mutation_types_maf_palette()
 #>            Splice_Site      Nonsense_Mutation        Frame_Shift_Del 
 #>              "#33A02C"              "#FB9A99"              "#E31A1C" 
-#>           In_Frame_Ins           In_Frame_Del      Missense_Mutation 
-#>              "#CAB2D6"              "#6A3D9A"              "#1F78B4" 
-#>          Splice_Region                 Intron       Nonstop_Mutation 
-#>              "#B2DF8A"              "#FDBF6F"              "#A6CEE3" 
-#> Translation_Start_Site                 Silent                    RNA 
-#>              "#B15928"              "#FDBF6F"              "#FDBF6F" 
-#>                  5'UTR                  3'UTR                5'Flank 
+#>        Frame_Shift_Ins           In_Frame_Ins           In_Frame_Del 
+#>              "#E31A1C"              "#CAB2D6"              "#6A3D9A" 
+#>      Missense_Mutation          Splice_Region                 Intron 
+#>              "#1F78B4"              "#B2DF8A"              "#FDBF6F" 
+#>       Nonstop_Mutation Translation_Start_Site                 Silent 
+#>              "#A6CEE3"              "#B15928"              "#FDBF6F" 
+#>                    RNA                  5'UTR                  3'UTR 
 #>              "#FDBF6F"              "#FDBF6F"              "#FDBF6F" 
-#>                3'Flank        Targeted_Region                    IGR 
-#>              "#FDBF6F"              "#FDBF6F"              "#FDBF6F"
+#>                5'Flank                3'Flank        Targeted_Region 
+#>              "#FDBF6F"              "#FDBF6F"              "#FDBF6F" 
+#>                    IGR 
+#>              "#FDBF6F"
 ```

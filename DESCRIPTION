@@ -1,10 +1,11 @@
 Package: mutationtypes
-Title: Utilities for Ensuring Language Describing Mutational Impact Aligns with 'SO' or 'MAF' dictionaries
+Title: Ensure Mutational Impacts Conform to Standard Dictionaries
 Version: 0.0.0.9000
 Authors@R: 
     person("Sam", "El-Kamand", , "sam.elkamand@gmail.com", role = c("aut", "cre", "cph"),
-           comment = c(ORCID = "YOUR-ORCID-ID"))
-Description: Check concordance of a vector of mutation impacts with 'SO' or 'MAF' dictionaries. Can also convert SO terms to MAF term.
+           comment = c(ORCID = "0000-0003-2270-8088"))
+Description: Check concordance of a vector of mutation impacts with 'SO' or 'MAF' dictionaries. 
+  Can also convert SO terms to MAF terms and/or select the most severe SO consequence from ampersand (&) delimited impacts.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)

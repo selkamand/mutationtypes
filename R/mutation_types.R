@@ -172,7 +172,6 @@ mutation_types_convert_so_to_maf <- function(so_mutation_types, variant_type = N
     )
   }
 
-  #browser()
   maf_mutation_types <- data.table::fcase(
     !so_mutation_types %in% c("frameshift_variant", "protein_altering_variant"), so2maf_df[['MAF']][match(so_mutation_types, so2maf_df[['SO']])],
     so_mutation_types == "frameshift_variant" & variant_type == "DEL", "Frame_Shift_Del",
