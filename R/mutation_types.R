@@ -117,7 +117,7 @@ mutation_types_convert_so_to_maf <- function(so_mutation_types, variant_type = N
   assertions::assert_character(so_mutation_types)
 
   if(split_on_ampersand)
-    so_mutation_types <- select_most_severe_consequence_so(strsplit(so_mutation_types, '&'))
+    so_mutation_types <- select_most_severe_consequence_so(so_mutation_types)
 
   so_mutation_types_uniq <- unique(so_mutation_types)
 
@@ -262,10 +262,9 @@ mutation_types_identify <- function(mutation_types, split_on_ampersand = TRUE, v
 #' @param so_mutation_types_list a list, where each element is a vector containing the set of SO terms you want to choose the most severe consequence from.
 #'
 #' @return the most severe consequence for each vector in so_mutation_types_list
-#' @export
 #'
 #' @examples
-#' select_most_severe_consequence_so(
+#' mutationtypes:::select_most_severe_consequence_so_list(
 #'   list(
 #'      c("intergenic_variant", "feature_truncation", "splice_acceptor_variant"),
 #'      c("initiator_codon_variant", "inframe_insertion")
@@ -273,7 +272,7 @@ mutation_types_identify <- function(mutation_types, split_on_ampersand = TRUE, v
 #')
 #' #> Result:
 #' #> c("splice_acceptor_variant", "initiator_codon_variant")
-select_most_severe_consequence_so <- function(so_mutation_types_list){
+select_most_severe_consequence_so_list <- function(so_mutation_types_list){
   if(!is.list(so_mutation_types_list)) cli::cli_abort("{.strong {so_mutation_types_list}} must be a list, not a {.strong {class(so_mutation_types_list)}}")
   priority_mappings = mutation_types_so_with_priority()
 
@@ -290,6 +289,30 @@ select_most_severe_consequence_so <- function(so_mutation_types_list){
 
 }
 
+#' Select the most severe consequence (SO)
+#'
+#' Take a character vector which may contain multiple so mutation types separated by '&'
+#' And choose only the most severe consequence
+#'
+#' @param so_mutation_types a character vector of SO terms, where multiple so_mutation_types per field are & delimited, and you want to choose the most severe consequence .
+#'
+#' @return the most severe consequence for each element in so_mutation_types
+#' @export
+#'
+#' @examples
+#' select_most_severe_consequence_so(
+#'  c(
+#'    "intergenic_variant&feature_truncation&splice_acceptor_variant",
+#'    "initiator_codon_variant&inframe_insertion"
+#'  )
+#')
+#' #> Result:
+#' #> c("splice_acceptor_variant", "initiator_codon_variant")
+select_most_severe_consequence_so <- function(so_mutation_types){
+  so_mutation_types_list  <- strsplit(so_mutation_types, split = "&")
+
+  select_most_severe_consequence_so_list(so_mutation_types_list)
+}
 
 # assert_all_mutations_are_valid_so <- assertions::assert_create(
 #   func = function(mutation_types) {
