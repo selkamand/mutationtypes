@@ -75,3 +75,7 @@ test_that("mutation_types_convert_so_to_maf works", {
     c("Nonstop_Mutation","Nonsense_Mutation")
   )
 })
+
+test_that("mutation_types_convert_so_to_maf() throws appropriate errors", {
+  expect_error(assert_all_mutations_are_valid_so("bob"), regexp =  "Found 1 mutation type which was NOT a valid SO terms: [bob]", fixed = TRUE)
+})
