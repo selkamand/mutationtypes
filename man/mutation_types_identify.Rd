@@ -22,7 +22,9 @@ one of c('SO', 'MAF', 'UNKNOWN').
 Will return 'UNKNOWN' unless ALL mutation types fit with one of the supported dictionaries
 }
 \description{
-Identify Mutation Dictionary Used
+Looks at variant consequence terms and guesses what mutation dictionary was used.
+SO and PAVE dictionaries overlap, meaning an observed set of terms can perfectly match both ontologies.
+If this happens, we assume they are SO terms.
 }
 \examples{
 mutation_types_identify(c('bob', 'billy', 'missense_variant'))
