@@ -28,6 +28,7 @@ Say you want to describe the impact of a mutation. There exists several dictiona
 
 2) [MAF Variant Classification](https://docs.gdc.cancer.gov/Encyclopedia/pages/Mutation_Annotation_Format_TCGAv2/)
 
+3) [PAVE](https://github.com/hartwigmedical/hmftools/blob/master/pave/README.md) Consequences that the PAVE annotator supports (mostly a subset of SO terms but with a couple of additions to indicate when a non-obvious consequence can be found thanks to phasing)
 
 **mutationtypes** makes it easy to check whether your vector of mutation types aligns to one of these dictionaries. 
 It also simplifies translation from one dictionary to another.
@@ -78,12 +79,20 @@ mutation_types_convert_so_to_maf(
   )
 )
 
+# Convert PAVE mutation classes to MAF terms
+mutation_types_convert_pave_to_maf(
+  pave_mutation_types = c('upstream_gene_variant', 'phased_inframe_insertion', 'phased_missense')
+)
+
 # Get list of valid MAF terms
 mutation_types_maf()
 
 # Get list of valid SO terms
 mutation_types_so()
 
-# Get Palettes for MAF/SO terms
+# Get list of valid PAVE terms
+mutation_types_pave()
+
+# Get Palettes for MAF/SO/PAVE terms
 mutation_types_maf_palette()
 ```

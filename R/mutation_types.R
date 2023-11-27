@@ -12,6 +12,21 @@ mutation_types_mapping_so_to_maf <- function(){
   return(df)
 }
 
+mutation_types_mapping_pave_to_maf <- function(){
+  df <- utils::read.csv(
+    file = system.file('pave_2_maf_mapping.tsv', package = "mutationtypes"),
+    header = TRUE,
+    sep = "\t"
+  )
+
+  # Replace any blanks with NAs
+  df[['MAF']] <- ifelse(nchar(df[['MAF']]) == 0, yes = NA, no = df[['MAF']])
+
+  return(df)
+}
+
+
+
 # Exposed Functions -------------------------------------------------------
 
 #' Dictionary of So terms
@@ -39,6 +54,16 @@ mutation_types_so_with_priority <- function(){
   mutation_types_so_wp[order(mutation_types_so_wp[["EffectPriority"]], decreasing = FALSE), , drop=FALSE]
 }
 
+mutation_types_pave_with_priority <- function(){
+  mutation_types_so_wp <- utils::read.csv(
+    file = system.file('pave_terms.tsv', package = "mutationtypes"),
+    header = TRUE,
+    sep = "\t"
+  )[c('Terms', "EffectPriority")]
+
+  mutation_types_so_wp[order(mutation_types_so_wp[["EffectPriority"]], decreasing = FALSE), , drop=FALSE]
+}
+
 
 #' Dictionary of MAF terms
 #'
@@ -56,6 +81,23 @@ mutation_types_maf <- function(){
   #stats::na.omit(unique(mutation_types_mapping_so_to_maf()[['MAF']]))
 }
 
+#' Dictionary of PAVE terms
+#'
+#' PAVE is a newer annotation software that supports annotaiton of mainly just a subset of SO terms,
+#' but with a couple of important additions to indicate when a non-obvious consequence can be found thanks to phasing.
+#'
+#' @return valid MAF terms (character)
+#' @export
+#'
+#' @examples
+#' mutation_types_pave()
+mutation_types_pave <- function(){
+  utils::read.csv(
+    file = system.file('pave_terms.tsv', package = "mutationtypes"),
+    header = TRUE,
+    sep = "\t"
+  )[['Terms']]
+}
 #' Palettes: MAF
 #'
 #' @return named vector. Names are MAF terms. Values are colors
@@ -91,6 +133,25 @@ mutation_types_so_palette <- function(){
  pal <- df[['Palette']]
  names(pal) <- df[['Terms']]
  return(pal)
+}
+
+#' Palettes: PAVE
+#'
+#' @return named vector. Names are PAVE terms. Values are colors
+#' @export
+#'
+#' @examples
+#' mutation_types_so_palette()
+mutation_types_pave_palette <- function(){
+  df <- utils::read.csv(
+    file = system.file('pave_terms.tsv', package = "mutationtypes"),
+    header = TRUE,
+    sep = "\t"
+  )
+
+  pal <- df[['Palette']]
+  names(pal) <- df[['Terms']]
+  return(pal)
 }
 
 
@@ -189,8 +250,97 @@ mutation_types_convert_so_to_maf <- function(so_mutation_types, variant_type = N
   return(maf_mutation_types)
 }
 
+#' Convert PAVE Mutation Types to MAF
+#'
+#' @param pave_mutation_types a vector of PAVE terms you want to convert to MAF variant classifications (character)
+#' @param split_on_ampersand should '&' separated SO terms be automatically converted to single SO terms based on highest severity? (flag)
+#' @param variant_type a vector describing each mutations type. Valid elements include: "SNP", "DNP", "TNP", "ONP", "DEL", "INS". Used to map frameshift_variant to more specific MAF columns (character)
+#' @param verbose verbose (flag)
+#' @return matched MAF variant classification terms (character)
+#' @export
+#'
+#' @examples
+#' mutation_types_convert_so_to_maf(c('INTRAGENIC', 'INTRAGENIC', 'intergenic_region'))
+mutation_types_convert_pave_to_maf <- function(pave_mutation_types, variant_type = NULL, split_on_ampersand = TRUE, verbose = TRUE){
+
+  # Assertions
+  assertions::assert_character(pave_mutation_types)
+
+  if(split_on_ampersand)
+    pave_mutation_types <- select_most_severe_consequence_pave(pave_mutation_types)
+
+  pave_mutation_types_uniq <- unique(pave_mutation_types)
+
+  if(verbose) cli::cli_h2('Validating Input')
+
+  # Check input mutation types are valid pave terms
+  assert_all_mutations_are_valid_pave(pave_mutation_types_uniq)
+
+  if(verbose) cli::cli_alert_success('Supplied mutation types are valid pave terms')
+  pave2maf_df <- mutation_types_mapping_pave_to_maf()
+
+  valid_variant_types = c("SNP", "DNP", "TNP", "ONP", "DEL", "INS")
+  if("frameshift" %in% pave_mutation_types){
+    # Require variant_type to be supplied if we have frameshift mutations we need to convert
+    assertions::assert(
+      !is.null(variant_type),
+      msg = "To convert PAVE term {.strong frameshift} to a MAF variant classification, you must supply argument {.arg variant_type}"
+    )
+
+    # assert variant_type
+    assertions::assert_character(variant_type)
+    assertions::assert_equal(length(variant_type), length(pave_mutation_types))
+    assertions::assert(all(variant_type %in% valid_variant_types), msg = "Invalid {.arg variant_type} values found ({unique(variant_type[!variant_type %in% valid_variant_types])}). Valid terms include {valid_variant_types}")
+
+    # Don't bother checking inframe argument as phasing in PAVE means you can't guess
+    # whether a mutation is in-frame by just looking at REF and ALT and instead
+    # whether mutation is inframe/nor is indicated by 'inframe_insertion/phased_inframe_insertion' consequence classifications
+    # (and their  deletion equivalents)
+    # if(!is.null(inframe)){
+    #   inframe_status_of_frameshift_variants <- inframe[pave_mutation_types == "frameshift_variant"]
+    #   assertions::assert(all(inframe_status_of_frameshift_variants == FALSE), msg = "Cannot have a frameshift_variant with inframe status: [{.strong {unique(inframe[pave_mutation_types == 'frameshift_variant' & inframe])}}]. Must be FALSE Either the variant classification or the inframe status must be incorrect")
+    # }
+
+    incorrect_variant_types <- unique(variant_type[!variant_type[pave_mutation_types=="frameshift_variant"] %in% c("INS", "DEL")])
+    assertions::assert(
+      length(incorrect_variant_types) == 0,
+      msg = "Variant Type must be {.strong INS} or {.strong DEL} when pave_mutation_type is 'frameshift_variant'. Not [{incorrect_variant_types}]"
+    )
+  }
+
+  # Ensure variant_type of every inframe_insertion is INS and every inframe_deletion is DEL
+  incorrect_variant_types_inframe_ins <- unique(variant_type[pave_mutation_types == "inframe_insertion" & variant_type != "INS"])
+  assertions::assert(
+    length(incorrect_variant_types_inframe_ins) == 0,
+    msg = "Variant Type must be {.strong INS} when pave_mutation_type is 'inframe_insertion'. Not [{incorrect_variant_types_inframe_ins}]"
+  )
+  incorrect_variant_types_inframe_del <- unique(variant_type[pave_mutation_types == "inframe_deletion" & variant_type != "DEL"])
+  assertions::assert(
+    length(incorrect_variant_types_inframe_del) == 0,
+    msg = "Variant Type must be {.strong DEL} when pave_mutation_type is 'inframe_deletion'. Not [{incorrect_variant_types_inframe_del}]"
+  )
+
+  maf_mutation_types <- data.table::fcase(
+    # For all PAVE classifications except frameshift convert to the equivalent MAF eterms
+    pave_mutation_types != "frameshift", pave2maf_df[['MAF']][match(pave_mutation_types, pave2maf_df[['PAVE']])],
+
+    # For frameshift mutations use variant_type to add the info we need for conversion
+    pave_mutation_types == "frameshift" & variant_type == "DEL", "Frame_Shift_Del",
+    pave_mutation_types == "frameshift" & variant_type == "INS", "Frame_Shift_Ins",
+    default=NA_character_
+  )
+
+  assertions::assert_no_missing(maf_mutation_types)
+
+  return(maf_mutation_types)
+}
+
 
 #' Identify Mutation Dictionary Used
+#'
+#' Looks at variant consequence terms and guesses what mutation dictionary was used.
+#' SO and PAVE dictionaries overlap, meaning an observed set of terms can perfectly match both ontologies.
+#' If this happens, we assume they are SO terms.
 #'
 #' @param mutation_types mutation types to test (character)
 #' @param split_on_ampersand split mutation types in a single string separated by ampersand (&) into 2 distinct mutation type columns (flag)
@@ -222,14 +372,18 @@ mutation_types_identify <- function(mutation_types, split_on_ampersand = TRUE, v
   so_classified_mutations <- uniq_mutation_types[uniq_mutation_types %in% mutation_types_so()]
   n_so_classified_mutations <- length(so_classified_mutations)
 
+  pave_classified_mutations <- uniq_mutation_types[uniq_mutation_types %in% mutation_types_pave()]
+  n_pave_classified_mutations <- length(pave_classified_mutations)
+
   maf_classified_mutations <- uniq_mutation_types[uniq_mutation_types %in% mutation_types_maf()]
   n_maf_classified_mutations <- length(maf_classified_mutations)
 
-  unclassified_mutation_types <- uniq_mutation_types[! uniq_mutation_types %in% c(so_classified_mutations, maf_classified_mutations)]
+  unclassified_mutation_types <- uniq_mutation_types[! uniq_mutation_types %in% c(so_classified_mutations, maf_classified_mutations, pave_classified_mutations)]
 
   if(verbose){
     cli::cli_h2('Identify Class')
     cli::cli_alert_info('Found {n_uniq_mutation_types} unique mutation type{?s} in input set')
+    cli::cli_alert_info('{n_pave_classified_mutations}/{n_uniq_mutation_types} mutation types were valid {.strong PAVE} terms')
     cli::cli_alert_info('{n_so_classified_mutations}/{n_uniq_mutation_types} mutation types were valid {.strong SO} terms')
     cli::cli_alert_info('{n_maf_classified_mutations}/{n_uniq_mutation_types} mutation types were valid {.strong MAF} terms')
 
@@ -243,6 +397,12 @@ mutation_types_identify <- function(mutation_types, split_on_ampersand = TRUE, v
       cli::cli_alert("{so_classified_mutations}")
     }
 
+    if(n_pave_classified_mutations > 0 & n_pave_classified_mutations < n_uniq_mutation_types){
+      cli::cli_h2('PAVE Mutation Types')
+      cli::cli_alert("{pave_classified_mutations}")
+    }
+
+
     if(length(unclassified_mutation_types) > 0 & length(unclassified_mutation_types) < n_uniq_mutation_types){
       cli::cli_h2('Unknown Mutation Types')
       cli::cli_alert('{unclassified_mutation_types}')
@@ -252,6 +412,7 @@ mutation_types_identify <- function(mutation_types, split_on_ampersand = TRUE, v
   }
 
   if(n_so_classified_mutations == n_uniq_mutation_types) return('SO')
+  else if(n_pave_classified_mutations == n_uniq_mutation_types) return('PAVE')
   else if(n_maf_classified_mutations == n_uniq_mutation_types) return('MAF')
   else return('UNKNOWN')
 }
@@ -262,7 +423,7 @@ mutation_types_identify <- function(mutation_types, split_on_ampersand = TRUE, v
 #'
 #' @param so_mutation_types_list a list, where each element is a vector containing the set of SO terms you want to choose the most severe consequence from.
 #'
-#' @return the most severe consequence for each vector in so_mutation_types_list
+#' @return the most severe consequence for each vector in so_mutation_types_list (character)
 #'
 #' @examples
 #' mutationtypes:::select_most_severe_consequence_so_list(
@@ -283,6 +444,40 @@ select_most_severe_consequence_so_list <- function(so_mutation_types_list){
     X=so_mutation_types_list,
     FUN = function(so_mutation_types){
       most_severe_term <- priority_mappings[priority_mappings[["Terms"]] %in% so_mutation_types,"Terms"][[1]]
+      return(most_severe_term)
+      # add test to make sure so_terms.tsv is sorted in order of EffectPriority since otherwise this doesn't work
+    },
+    FUN.VALUE = character(1))
+
+}
+
+#' Select the most severe consequence (PAVE)
+#'
+#' @noRd
+#'
+#' @param pave_mutation_types_list a list, where each element is a vector containing the set of PAVE terms you want to choose the most severe consequence from.
+#'
+#' @return the most severe consequence for each vector in pave_mutation_types_list (character)
+#'
+#' @examples
+#' mutationtypes:::select_most_severe_consequence_pave_list(
+#'   list(
+#'      c("upstream_gene_variant", "phased_synonymous", "5_prime_UTR_variant"),
+#'      c("missense_variant", "frameshift")
+#'   )
+#')
+#' #> Result:
+#' #> c("phased_synonymous", "frameshift")
+select_most_severe_consequence_pave_list <- function(pave_mutation_types_list){
+  if(!is.list(pave_mutation_types_list)) cli::cli_abort("{.strong {pave_mutation_types_list}} must be a list, not a {.strong {class(pave_mutation_types_list)}}")
+  priority_mappings = mutation_types_pave_with_priority()
+
+  assert_all_mutations_are_valid_pave(unlist(pave_mutation_types_list))
+
+  vapply(
+    X=pave_mutation_types_list,
+    FUN = function(pave_mutation_types){
+      most_severe_term <- priority_mappings[priority_mappings[["Terms"]] %in% pave_mutation_types,"Terms"][[1]]
       return(most_severe_term)
       # add test to make sure so_terms.tsv is sorted in order of EffectPriority since otherwise this doesn't work
     },
@@ -317,14 +512,32 @@ select_most_severe_consequence_so <- function(so_mutation_types){
   select_most_severe_consequence_so_list(so_mutation_types_list)
 }
 
-# assert_all_mutations_are_valid_so <- assertions::assert_create(
-#   func = function(mutation_types) {
-#     unique_mutation_types <- unique(unlist(strsplit(mutation_types, split = "&")))
-#     unknown_mutation_types <- unique_mutation_types[!unique_mutation_types %in% mutation_types_so()]
-#     if(length(unique_mutation_types) > 0 ){
-#       "Found {.strong {length(unknown_mutation_types)}} mutation type{?s} which {?was/were} NOT valid SO terms: [{.strong {unknown_mutation_types}}]"
-#     }}
-# )
+#' Select the most severe consequence (PAVE)
+#'
+#' Take a character vector which may contain multiple PAVE mutation types separated by '&'
+#' And choose only the most severe consequence
+#'
+#' @param pave_mutation_types a character vector of PAVE terms, where multiple pave_mutation_types per field are & delimited, and you want to choose the most severe consequence .
+#'
+#' @return the most severe consequence for each element in pave_mutation_types
+#' @export
+#'
+#' @examples
+#' select_most_severe_consequence_pave(
+#'  c(
+#'    "upstream_gene_variant&phased_synonymous&5_prime_UTR_variant",
+#'    "missense_variant&frameshift"
+#'  )
+#')
+#' #> Result:
+#' #> c("phased_synonymous", "frameshift")
+select_most_severe_consequence_pave <- function(pave_mutation_types){
+  assertions::assert_character(pave_mutation_types)
+
+  pave_mutation_types_list  <- strsplit(pave_mutation_types, split = "&")
+
+  select_most_severe_consequence_pave_list(pave_mutation_types_list)
+}
 
 
 assert_all_mutations_are_valid_so <- function(mutation_types){
@@ -340,3 +553,18 @@ assert_all_mutations_are_valid_so <- function(mutation_types){
   }
   return(invisible(TRUE))
 }
+
+assert_all_mutations_are_valid_pave <- function(mutation_types){
+  unique_mutation_types <- unique(unlist(strsplit(mutation_types, split = "&")))
+  unknown_mutation_types <- unique_mutation_types[!unique_mutation_types %in% mutation_types_pave()]
+  if(length(unknown_mutation_types) > 0 ){
+    cli::cli_abort(
+      c(
+        "Found {.strong {length(unknown_mutation_types)}} mutation type{?s} which {?was/were} NOT {?a/} valid PAVE terms: [{.strong {unknown_mutation_types}}]",
+        x = "Please ensure all mutation types are in {.code mutation_types_pave()}"
+      )
+    )
+  }
+  return(invisible(TRUE))
+}
+

@@ -23,6 +23,11 @@ dictionaries you could use, including
 2)  [MAF Variant
     Classification](https://docs.gdc.cancer.gov/Encyclopedia/pages/Mutation_Annotation_Format_TCGAv2/)
 
+3)  [PAVE](https://github.com/hartwigmedical/hmftools/blob/master/pave/README.md)
+    Consequences that the PAVE annotator supports (mostly a subset of SO
+    terms but with a couple of additions to indicate when a non-obvious
+    consequence can be found thanks to phasing)
+
 **mutationtypes** makes it easy to check whether your vector of mutation
 types aligns to one of these dictionaries. It also simplifies
 translation from one dictionary to another.
@@ -63,8 +68,13 @@ mutation_types_identify(
 #> ── Identify Class ──
 #> 
 #> ℹ Found 4 unique mutation types in input set
+#> ℹ 2/4 mutation types were valid PAVE terms
 #> ℹ 4/4 mutation types were valid SO terms
 #> ℹ 0/4 mutation types were valid MAF terms
+#> 
+#> ── PAVE Mutation Types ──
+#> 
+#> → stop_lost and missense_variant
 #> [1] "SO"
 
 # Convert sequence ontology mutation classes to MAF terms
@@ -84,6 +94,16 @@ mutation_types_convert_so_to_maf(
 #> ✔ Supplied mutation types are valid so terms
 #> [1] "Intron"            "Intron"            "IGR"              
 #> [4] "Nonstop_Mutation"  "Missense_Mutation" "Missense_Mutation"
+
+# Convert PAVE mutation classes to MAF terms
+mutation_types_convert_pave_to_maf(
+  pave_mutation_types = c('upstream_gene_variant', 'phased_inframe_insertion', 'phased_missense')
+)
+#> 
+#> ── Validating Input ──
+#> 
+#> ✔ Supplied mutation types are valid pave terms
+#> [1] "5'Flank"           "In_Frame_Ins"      "Missense_Mutation"
 
 # Get list of valid MAF terms
 mutation_types_maf()
@@ -149,7 +169,20 @@ mutation_types_so()
 #> [50] "intergenic_variant"                            
 #> [51] "intergenic_region"
 
-# Get Palettes for MAF/SO terms
+# Get list of valid PAVE terms
+mutation_types_pave()
+#>  [1] "upstream_gene_variant"              "intron_variant"                    
+#>  [3] "5_prime_UTR_variant"                "3_prime_UTR_variant"               
+#>  [5] "non_coding_transcript_exon_variant" "synonymous_variant"                
+#>  [7] "phased_synonymous"                  "missense_variant"                  
+#>  [9] "inframe_insertion"                  "inframe_deletion"                  
+#> [11] "phased_inframe_insertion"           "phased_inframe_deletion"           
+#> [13] "phased_missense"                    "stop_gained"                       
+#> [15] "frameshift"                         "start_lost"                        
+#> [17] "stop_lost"                          "splice_donor_variant"              
+#> [19] "splice_acceptor_variant"
+
+# Get Palettes for MAF/SO/PAVE terms
 mutation_types_maf_palette()
 #>            Splice_Site      Nonsense_Mutation        Frame_Shift_Del 
 #>              "#33A02C"              "#FB9A99"              "#E31A1C" 
