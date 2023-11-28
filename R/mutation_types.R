@@ -320,6 +320,13 @@ mutation_types_convert_pave_to_maf <- function(pave_mutation_types, variant_type
     msg = "Variant Type must be {.strong DEL} when pave_mutation_type is 'inframe_deletion'. Not [{incorrect_variant_types_inframe_del}]"
   )
 
+  # Ensure variant_type of frameshift is either an insertion/deletion
+  incorrect_variant_types_frameshift <- unique(variant_type[pave_mutation_types == "frameshift" & !variant_type %in% c("INS", "DEL")])
+  assertions::assert(
+    length(incorrect_variant_types_frameshift) == 0,
+    msg = "Variant Type must be {.strong INS or DEL} when pave_mutation_type is {.strong frameshift}. Not [{incorrect_variant_types_frameshift}]"
+  )
+
   maf_mutation_types <- data.table::fcase(
     # For all PAVE classifications except frameshift convert to the equivalent MAF eterms
     pave_mutation_types != "frameshift", pave2maf_df[['MAF']][match(pave_mutation_types, pave2maf_df[['PAVE']])],

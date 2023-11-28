@@ -76,6 +76,14 @@ test_that("mutation_types_convert_pave_to_maf works", {
     mutation_types_convert_pave_to_maf(c("stop_lost&missense_variant", "stop_gained&upstream_gene_variant&phased_synonymous"), verbose = TRUE) |> suppressMessages(),
     c("Nonstop_Mutation","Nonsense_Mutation")
   )
+
+
+  # Test
+  expect_error(
+    mutation_types_convert_pave_to_maf(pave_mutation_types = "frameshift", variant_type = "SNP"),
+    regexp = "Variant Type must be INS or DEL when pave_mutation_type is frameshift"
+  )
+
 })
 
 test_that("mutation_types_convert_pave_to_maf() throws appropriate errors", {
