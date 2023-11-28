@@ -533,7 +533,7 @@ select_most_severe_consequence_so <- function(so_mutation_types){
 #' select_most_severe_consequence_pave(
 #'  c(
 #'    "upstream_gene_variant&phased_synonymous&5_prime_UTR_variant",
-#'    "missense_variant&frameshift"
+#'    "missense_variant&frameshift_variant"
 #'  )
 #')
 #' #> Result:
