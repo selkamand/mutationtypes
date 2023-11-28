@@ -280,7 +280,7 @@ mutation_types_convert_pave_to_maf <- function(pave_mutation_types, variant_type
   pave2maf_df <- mutation_types_mapping_pave_to_maf()
 
   valid_variant_types = c("SNP", "DNP", "TNP", "ONP", "DEL", "INS")
-  if("frameshift" %in% pave_mutation_types){
+  if("frameshift_variant" %in% pave_mutation_types){
     # Require variant_type to be supplied if we have frameshift mutations we need to convert
     assertions::assert(
       !is.null(variant_type),
@@ -321,7 +321,7 @@ mutation_types_convert_pave_to_maf <- function(pave_mutation_types, variant_type
   )
 
   # Ensure variant_type of frameshift is either an insertion/deletion
-  incorrect_variant_types_frameshift <- unique(variant_type[pave_mutation_types == "frameshift" & !variant_type %in% c("INS", "DEL")])
+  incorrect_variant_types_frameshift <- unique(variant_type[pave_mutation_types == "frameshift_variant" & !variant_type %in% c("INS", "DEL")])
   assertions::assert(
     length(incorrect_variant_types_frameshift) == 0,
     msg = "Variant Type must be {.strong INS or DEL} when pave_mutation_type is {.strong frameshift}. Not [{incorrect_variant_types_frameshift}]"
@@ -329,11 +329,11 @@ mutation_types_convert_pave_to_maf <- function(pave_mutation_types, variant_type
 
   maf_mutation_types <- data.table::fcase(
     # For all PAVE classifications except frameshift convert to the equivalent MAF eterms
-    pave_mutation_types != "frameshift", pave2maf_df[['MAF']][match(pave_mutation_types, pave2maf_df[['PAVE']])],
+    pave_mutation_types != "frameshift_variant", pave2maf_df[['MAF']][match(pave_mutation_types, pave2maf_df[['PAVE']])],
 
     # For frameshift mutations use variant_type to add the info we need for conversion
-    pave_mutation_types == "frameshift" & variant_type == "DEL", "Frame_Shift_Del",
-    pave_mutation_types == "frameshift" & variant_type == "INS", "Frame_Shift_Ins",
+    pave_mutation_types == "frameshift_variant" & variant_type == "DEL", "Frame_Shift_Del",
+    pave_mutation_types == "frameshift_variant" & variant_type == "INS", "Frame_Shift_Ins",
     default=NA_character_
   )
 
@@ -470,11 +470,11 @@ select_most_severe_consequence_so_list <- function(so_mutation_types_list){
 #' mutationtypes:::select_most_severe_consequence_pave_list(
 #'   list(
 #'      c("upstream_gene_variant", "phased_synonymous", "5_prime_UTR_variant"),
-#'      c("missense_variant", "frameshift")
+#'      c("missense_variant", "frameshift_variant")
 #'   )
 #')
 #' #> Result:
-#' #> c("phased_synonymous", "frameshift")
+#' #> c("phased_synonymous", "frameshift_variant")
 select_most_severe_consequence_pave_list <- function(pave_mutation_types_list){
   if(!is.list(pave_mutation_types_list)) cli::cli_abort("{.strong {pave_mutation_types_list}} must be a list, not a {.strong {class(pave_mutation_types_list)}}")
   priority_mappings = mutation_types_pave_with_priority()
@@ -537,7 +537,7 @@ select_most_severe_consequence_so <- function(so_mutation_types){
 #'  )
 #')
 #' #> Result:
-#' #> c("phased_synonymous", "frameshift")
+#' #> c("phased_synonymous", "frameshift_variant")
 select_most_severe_consequence_pave <- function(pave_mutation_types){
   assertions::assert_character(pave_mutation_types)
 

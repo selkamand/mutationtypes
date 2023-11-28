@@ -24,5 +24,5 @@ select_most_severe_consequence_pave(
  )
 )
 #> Result:
-#> c("phased_synonymous", "frameshift")
+#> c("phased_synonymous", "frameshift_variant")
 }

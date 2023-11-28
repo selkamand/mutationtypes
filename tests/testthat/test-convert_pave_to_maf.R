@@ -35,7 +35,7 @@ test_that("mutation_types_convert_pave_to_maf works", {
   )
 
   expect_error(
-    mutation_types_convert_pave_to_maf("frameshift", verbose = TRUE) |> suppressMessages(),
+    mutation_types_convert_pave_to_maf("frameshift_variant", verbose = TRUE) |> suppressMessages(),
     'To convert PAVE term.*variant classification, you must supply argument .*variant_type'
   )
 
@@ -43,7 +43,7 @@ test_that("mutation_types_convert_pave_to_maf works", {
   # Test conversions of frameshift and inframe_deletion
   expect_equal(
     mutation_types_convert_pave_to_maf(
-      c("frameshift", "frameshift"),
+      c("frameshift_variant", "frameshift_variant"),
       variant_type = c("DEL", "INS"),
       verbose = FALSE) |> suppressMessages(),
     c("Frame_Shift_Del", "Frame_Shift_Ins")
@@ -80,8 +80,8 @@ test_that("mutation_types_convert_pave_to_maf works", {
 
   # Test
   expect_error(
-    mutation_types_convert_pave_to_maf(pave_mutation_types = "frameshift", variant_type = "SNP"),
-    regexp = "Variant Type must be INS or DEL when pave_mutation_type is frameshift"
+    mutation_types_convert_pave_to_maf(pave_mutation_types = "frameshift_variant", variant_type = "SNP") |> suppressMessages(),
+    regexp = "Variant Type must be INS or DEL when pave_mutation_type is 'frameshift_variant'. Not [SNP]", fixed=TRUE
   )
 
 })

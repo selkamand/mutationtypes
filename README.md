@@ -178,7 +178,7 @@ mutation_types_pave()
 #>  [9] "inframe_insertion"                  "inframe_deletion"                  
 #> [11] "phased_inframe_insertion"           "phased_inframe_deletion"           
 #> [13] "phased_missense"                    "stop_gained"                       
-#> [15] "frameshift"                         "start_lost"                        
+#> [15] "frameshift_variant"                         "start_lost"                        
 #> [17] "stop_lost"                          "splice_donor_variant"              
 #> [19] "splice_acceptor_variant"
 
