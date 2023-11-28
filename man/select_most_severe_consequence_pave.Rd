@@ -20,9 +20,9 @@ And choose only the most severe consequence
 select_most_severe_consequence_pave(
  c(
    "upstream_gene_variant&phased_synonymous&5_prime_UTR_variant",
-   "missense_variant&frameshift"
+   "missense_variant&frameshift_variant"
  )
 )
 #> Result:
-#> c("phased_synonymous", "frameshift")
+#> c("phased_synonymous", "frameshift_variant")
 }

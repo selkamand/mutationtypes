@@ -13,7 +13,7 @@ phased_inframe_insertion	In_Frame_Ins
 phased_inframe_deletion	In_Frame_Del
 phased_missense	Missense_Mutation
 stop_gained	Nonsense_Mutation
-frameshift	
+frameshift_variant	
 start_lost	Translation_Start_Site
 stop_lost	Nonstop_Mutation
 splice_donor_variant	Splice_Site

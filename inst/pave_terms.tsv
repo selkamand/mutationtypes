@@ -13,7 +13,7 @@ phased_inframe_insertion	MISSENSE	inframe_insertion	In_Frame_Ins	#CAB2D6	5
 phased_inframe_deletion	MISSENSE	inframe_deletion	In_Frame_Del	#6A3D9A	5
 phased_missense	MISSENSE	missense_variant	Missense_Mutation	#1F78B4	6
 stop_gained	NONSENSE_OR_FRAMESHIFT	stop_gained	Nonsense_Mutation	#FB9A99	3
-frameshift	NONSENSE_OR_FRAMESHIFT	frameshift_variant	NA	#E31A1C	3
+frameshift_variant	NONSENSE_OR_FRAMESHIFT	frameshift_variant	NA	#E31A1C	3
 start_lost	NONSENSE_OR_FRAMESHIFT	start_lost	Translation_Start_Site	#B15928	4
 stop_lost	NONSENSE_OR_FRAMESHIFT	stop_lost	Nonstop_Mutation	#A6CEE3	3
 splice_donor_variant	SPLICE	splice_donor_variant	Splice_Site	#33A02C	2
