@@ -387,6 +387,7 @@ mutation_types_convert_pave_to_maf <- function(pave_mutation_types, variant_type
 #'
 #' @param mutation_types mutation types to test (character)
 #' @param split_on_ampersand split mutation types in a single string separated by ampersand (&) into 2 distinct mutation type columns (flag)
+#' @param ignore_missing should we ignore missing (NA) or empty ('') mutation_types when identifying a classification scheme (flag)
 #' @param verbose verbose (flag)
 #'
 #' @return one of c('SO', 'MAF', 'UNKNOWN').
@@ -395,19 +396,24 @@ mutation_types_convert_pave_to_maf <- function(pave_mutation_types, variant_type
 #'
 #' @examples
 #' mutation_types_identify(c('bob', 'billy', 'missense_variant'))
-mutation_types_identify <- function(mutation_types, split_on_ampersand = TRUE, verbose = TRUE){
+mutation_types_identify <- function(mutation_types, split_on_ampersand = TRUE, verbose = TRUE, ignore_missing = FALSE){
 
   # assertions
   if(!is.character(mutation_types)) cli::cli_abort('mutation_types must be a character vector, not {class(mutation_types)}')
   if(!(is.logical(verbose) & length(verbose) == 1)) cli::cli_abort('{.arg verbose} must be a flag, not a {class(verbose)}')
   if(!(is.logical(split_on_ampersand) & length(verbose) == 1))  cli::cli_abort('{.arg split_on_ampersand} must be a flag, not a {class(split_on_ampersand)}')
 
+  if(ignore_missing)
+    mutation_types <- mutation_types[!is.na(mutation_types) & mutation_types != ""]
+
+  if(length(mutation_types) == 0)
+    return('UNKNOWN')
+
   # Split on ampersand so multi-consequence mutation_types
   # (e.g. splice_donor_variant&intron_variant) are still classified correctly)
-  if(split_on_ampersand)
-    mutation_types <- unlist(strsplit(mutation_types, split =  "&", fixed = TRUE))
-
-
+  if(split_on_ampersand){
+    mutation_types <- unlist(strsplit(paste0(mutation_types, "&"), split =  "&", fixed = TRUE))
+  }
   # Count unique mutation types
   uniq_mutation_types <- unique(mutation_types)
   n_uniq_mutation_types = length(uniq_mutation_types)

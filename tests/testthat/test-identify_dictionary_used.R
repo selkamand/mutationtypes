@@ -75,3 +75,46 @@ test_that("mutation_types_identify works", {
     "UNKNOWN"
   )
 })
+
+test_that("mutation_types_identify handles empty and missing data appropriately", {
+
+  expect_equal(
+    mutation_types_identify(c('missense_variant'), verbose = FALSE),
+    "SO"
+  )
+
+  # Not ignoring missing / empty
+  expect_equal(
+    mutation_types_identify(c(NA_character_), verbose = FALSE),
+    "UNKNOWN"
+  )
+
+  expect_equal(
+    mutation_types_identify(c(''), verbose = FALSE),
+    "UNKNOWN"
+  )
+
+  expect_equal(
+    mutation_types_identify(c('missense_variant', NA), verbose = FALSE),
+    "UNKNOWN"
+  )
+
+  expect_equal(
+    mutation_types_identify(c('missense_variant', ''), verbose = FALSE),
+    "UNKNOWN"
+  )
+
+  # Ignoring missing / empty
+  expect_equal(
+    mutation_types_identify(c('missense_variant', NA),ignore_missing = TRUE, verbose = FALSE),
+    "SO"
+  )
+  expect_equal(
+    mutation_types_identify(c('missense_variant', ''), ignore_missing = TRUE, verbose = FALSE),
+    "SO"
+  )
+
+
+
+
+})

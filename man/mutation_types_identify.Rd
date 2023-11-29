@@ -7,7 +7,8 @@
 mutation_types_identify(
   mutation_types,
   split_on_ampersand = TRUE,
-  verbose = TRUE
+  verbose = TRUE,
+  ignore_missing = FALSE
 )
 }
 \arguments{
@@ -16,6 +17,8 @@ mutation_types_identify(
 \item{split_on_ampersand}{split mutation types in a single string separated by ampersand (&) into 2 distinct mutation type columns (flag)}
 
 \item{verbose}{verbose (flag)}
+
+\item{ignore_missing}{should we ignore missing (NA) or empty ('') mutation_types when identifying a classification scheme (flag)}
 }
 \value{
 one of c('SO', 'MAF', 'UNKNOWN').
