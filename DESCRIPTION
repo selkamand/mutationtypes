@@ -13,7 +13,9 @@ RoxygenNote: 7.2.3
 Imports: 
     assertions (>= 0.0.0.9000),
     cli,
-    data.table
+    data.table,
+    stats,
+    utils
 Suggests: 
     covr,
     testthat (>= 3.0.0)

@@ -171,6 +171,7 @@ so_terms_without_mapping <- function(){
 #' @param split_on_ampersand should '&' separated SO terms be automatically converted to single SO terms based on highest severity? (flag)
 #' @param inframe is the mutation inframe? (logical). Used to map protein_altering_variant to valid MAF columns
 #' @param variant_type a vector describing each mutations type. Valid elements include: "SNP", "DNP", "TNP", "ONP", "DEL", "INS". Used to map frameshift_variant to more specific MAF columns (character)
+#' @param missing_to_silent should missing (NA) or empty ('') mutation types be converted to 'Silent' mutations?
 #' @param verbose verbose (flag)
 #' @return matched MAF variant classification terms (character)
 #' @export
@@ -277,6 +278,7 @@ mutation_types_convert_so_to_maf <- function(so_mutation_types, variant_type = N
 #' @param pave_mutation_types a vector of PAVE terms you want to convert to MAF variant classifications (character)
 #' @param split_on_ampersand should '&' separated SO terms be automatically converted to single SO terms based on highest severity? (flag)
 #' @param variant_type a vector describing each mutations type. Valid elements include: "SNP", "DNP", "TNP", "ONP", "DEL", "INS". Used to map frameshift_variant to more specific MAF columns (character)
+#' @inheritParams mutation_types_convert_so_to_maf
 #' @param verbose verbose (flag)
 #' @return matched MAF variant classification terms (character)
 #' @export
@@ -541,7 +543,7 @@ select_most_severe_consequence_pave_list <- function(pave_mutation_types_list, m
 #' And choose only the most severe consequence
 #'
 #' @param so_mutation_types a character vector of SO terms, where multiple so_mutation_types per field are & delimited, and you want to choose the most severe consequence .
-#'
+#' @param missing_is_valid should NA values be considered valid mutation classes or should they throw an error? (flag)
 #' @return the most severe consequence for each element in so_mutation_types
 #' @export
 #'
@@ -568,6 +570,7 @@ select_most_severe_consequence_so <- function(so_mutation_types, missing_is_vali
 #' And choose only the most severe consequence
 #'
 #' @param pave_mutation_types a character vector of PAVE terms, where multiple pave_mutation_types per field are & delimited, and you want to choose the most severe consequence .
+#' @inheritParams select_most_severe_consequence_so
 #'
 #' @return the most severe consequence for each element in pave_mutation_types
 #' @export

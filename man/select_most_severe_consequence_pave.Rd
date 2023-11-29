@@ -11,6 +11,8 @@ select_most_severe_consequence_pave(
 }
 \arguments{
 \item{pave_mutation_types}{a character vector of PAVE terms, where multiple pave_mutation_types per field are & delimited, and you want to choose the most severe consequence .}
+
+\item{missing_is_valid}{should NA values be considered valid mutation classes or should they throw an error? (flag)}
 }
 \value{
 the most severe consequence for each element in pave_mutation_types

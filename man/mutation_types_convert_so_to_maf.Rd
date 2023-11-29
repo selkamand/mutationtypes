@@ -22,6 +22,8 @@ mutation_types_convert_so_to_maf(
 
 \item{split_on_ampersand}{should '&' separated SO terms be automatically converted to single SO terms based on highest severity? (flag)}
 
+\item{missing_to_silent}{should missing (NA) or empty ('') mutation types be converted to 'Silent' mutations?}
+
 \item{verbose}{verbose (flag)}
 }
 \value{
