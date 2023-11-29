@@ -4,7 +4,10 @@
 \alias{select_most_severe_consequence_pave}
 \title{Select the most severe consequence (PAVE)}
 \usage{
-select_most_severe_consequence_pave(pave_mutation_types)
+select_most_severe_consequence_pave(
+  pave_mutation_types,
+  missing_is_valid = FALSE
+)
 }
 \arguments{
 \item{pave_mutation_types}{a character vector of PAVE terms, where multiple pave_mutation_types per field are & delimited, and you want to choose the most severe consequence .}

@@ -78,11 +78,34 @@ test_that("mutation_types_convert_pave_to_maf works", {
   )
 
 
-  # Test
+  # Throw an error if variant_type doesn't make sense for a mutation_types
   expect_error(
     mutation_types_convert_pave_to_maf(pave_mutation_types = "frameshift_variant", variant_type = "SNP") |> suppressMessages(),
     regexp = "Variant Type must be INS or DEL when pave_mutation_type is 'frameshift_variant'. Not [SNP]", fixed=TRUE
   )
+
+  # Throw an error if you supply empty strings as mutation_types
+  expect_error(
+    mutation_types_convert_pave_to_maf(pave_mutation_types = "") |> suppressMessages(),
+    regexp = "Found 1 variant with no mutation type value", fixed=TRUE
+  )
+
+  # Throw an error if you supply missing (NA) values in mutation_types
+  expect_error(
+    mutation_types_convert_pave_to_maf(pave_mutation_types = NA_character_) |> suppressMessages(),
+    regexp = "'pave_mutation_types' must have no missing values! Found 1", fixed=TRUE
+  )
+
+  # Return SILENT if you supply empty strings (or missing NA values) as mutation_types and set  missing_to_silent = TRUE
+  expect_equal(
+    mutation_types_convert_pave_to_maf(pave_mutation_types = "", missing_to_silent = TRUE) |> suppressMessages(),
+    "Silent"
+  )
+  expect_equal(
+    mutation_types_convert_pave_to_maf(pave_mutation_types = NA_character_, missing_to_silent = TRUE) |> suppressMessages(),
+    "Silent"
+  )
+
 
 })
 

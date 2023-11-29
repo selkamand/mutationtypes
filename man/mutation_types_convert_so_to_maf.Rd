@@ -9,6 +9,7 @@ mutation_types_convert_so_to_maf(
   variant_type = NULL,
   inframe = NULL,
   split_on_ampersand = TRUE,
+  missing_to_silent = FALSE,
   verbose = TRUE
 )
 }

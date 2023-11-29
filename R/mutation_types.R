@@ -1,4 +1,6 @@
 
+
+# Unexposed Data Loading Functions ----------------------------------------
 mutation_types_mapping_so_to_maf <- function(){
   df <- utils::read.csv(
     file = system.file('so_2_maf_mapping.tsv', package = "mutationtypes"),
@@ -27,7 +29,7 @@ mutation_types_mapping_pave_to_maf <- function(){
 
 
 
-# Exposed Functions -------------------------------------------------------
+# Data Loading Functions -------------------------------------------------------
 
 #' Dictionary of So terms
 #'
@@ -160,6 +162,9 @@ so_terms_without_mapping <- function(){
   stats::na.omit(unique(so2maf_df[['SO']][is.na(so2maf_df[['MAF']])]))
 }
 
+
+# Conversions -------------------------------------------------------------
+
 #' Convert SO Mutation Types to MAF
 #'
 #' @param so_mutation_types a vector of SO terms you want to convert to MAF variant classifications (character)
@@ -172,20 +177,29 @@ so_terms_without_mapping <- function(){
 #'
 #' @examples
 #' mutation_types_convert_so_to_maf(c('INTRAGENIC', 'INTRAGENIC', 'intergenic_region'))
-mutation_types_convert_so_to_maf <- function(so_mutation_types, variant_type = NULL, inframe = NULL, split_on_ampersand = TRUE, verbose = TRUE){
+mutation_types_convert_so_to_maf <- function(so_mutation_types, variant_type = NULL, inframe = NULL, split_on_ampersand = TRUE,  missing_to_silent = FALSE, verbose = TRUE){
 
   # Assertions
   assertions::assert_character(so_mutation_types)
+  if(!missing_to_silent) assertions::assert_no_missing(so_mutation_types)
+
+  if(!missing_to_silent)
+    assertions::assert(
+      all(nchar(so_mutation_types) > 0),
+      msg = "Found {sum(nchar(so_mutation_types) == 0)} variant{?s} with no mutation type value (empty string). There are 2 possible solutions\f
+      1. Either ensure all variants have a consequence OR\f
+      2. If appropriate set {.arg missing_to_silent = TRUE} to assume all variants without consequences have no effect (these will be set to SILENT in the MAF)"
+    )
 
   if(split_on_ampersand)
-    so_mutation_types <- select_most_severe_consequence_so(so_mutation_types)
+    so_mutation_types <- select_most_severe_consequence_so(so_mutation_types, missing_is_valid = missing_to_silent)
 
   so_mutation_types_uniq <- unique(so_mutation_types)
 
   if(verbose) cli::cli_h2('Validating Input')
 
   # Check input mutation types are valid so terms
-  assert_all_mutations_are_valid_so(so_mutation_types_uniq)
+  assert_all_mutations_are_valid_so(so_mutation_types_uniq, missing_is_valid = missing_to_silent)
 
   if(verbose) cli::cli_alert_success('Supplied mutation types are valid so terms')
   so2maf_df <- mutation_types_mapping_so_to_maf()
@@ -233,7 +247,16 @@ mutation_types_convert_so_to_maf <- function(so_mutation_types, variant_type = N
     )
   }
 
+  # Whether missing (empty string or NA_character) values should be set to 'Silent' of 'NA_character' in fcase statement below
+  if(missing_to_silent == TRUE)
+    maf_value_for_missing = "Silent"
+  else
+    maf_value_for_missing = NA_character_
+
   maf_mutation_types <- data.table::fcase(
+    # Replace missing or empty SO mutation typesto Silent or NA depending on missing_as_silent argument
+    so_mutation_types == "" | is.na(so_mutation_types), maf_value_for_missing,
+    # For all PAVE classifications except frameshift convert to the equivalent MAF terms
     !so_mutation_types %in% c("frameshift_variant", "protein_altering_variant"), so2maf_df[['MAF']][match(so_mutation_types, so2maf_df[['SO']])],
     so_mutation_types == "frameshift_variant" & variant_type == "DEL", "Frame_Shift_Del",
     so_mutation_types == "frameshift_variant" & variant_type == "INS", "Frame_Shift_Ins",
@@ -246,7 +269,6 @@ mutation_types_convert_so_to_maf <- function(so_mutation_types, variant_type = N
     )
 
   assertions::assert_no_missing(maf_mutation_types)
-
   return(maf_mutation_types)
 }
 
@@ -261,20 +283,30 @@ mutation_types_convert_so_to_maf <- function(so_mutation_types, variant_type = N
 #'
 #' @examples
 #' mutation_types_convert_so_to_maf(c('INTRAGENIC', 'INTRAGENIC', 'intergenic_region'))
-mutation_types_convert_pave_to_maf <- function(pave_mutation_types, variant_type = NULL, split_on_ampersand = TRUE, verbose = TRUE){
+mutation_types_convert_pave_to_maf <- function(pave_mutation_types, variant_type = NULL, split_on_ampersand = TRUE, missing_to_silent = FALSE, verbose = TRUE){
 
   # Assertions
   assertions::assert_character(pave_mutation_types)
+  if(!missing_to_silent) assertions::assert_no_missing(pave_mutation_types)
+
+  if(!missing_to_silent)
+    assertions::assert(
+      all(nchar(pave_mutation_types) > 0),
+      msg = "Found {sum(nchar(pave_mutation_types) == 0)} variant{?s} with no mutation type value (empty string). There are 2 possible solutions\f
+      1. Either ensure all variants have a consequence OR\f
+      2. If appropriate set {.arg missing_to_silent = TRUE} to assume all variants without consequences have no effect (these will be set to SILENT in the MAF)"
+    )
+
 
   if(split_on_ampersand)
-    pave_mutation_types <- select_most_severe_consequence_pave(pave_mutation_types)
+    pave_mutation_types <- select_most_severe_consequence_pave(pave_mutation_types, missing_is_valid = missing_to_silent)
 
   pave_mutation_types_uniq <- unique(pave_mutation_types)
 
   if(verbose) cli::cli_h2('Validating Input')
 
   # Check input mutation types are valid pave terms
-  assert_all_mutations_are_valid_pave(pave_mutation_types_uniq)
+  assert_all_mutations_are_valid_pave(pave_mutation_types_uniq, missing_is_valid = missing_to_silent)
 
   if(verbose) cli::cli_alert_success('Supplied mutation types are valid pave terms')
   pave2maf_df <- mutation_types_mapping_pave_to_maf()
@@ -291,15 +323,6 @@ mutation_types_convert_pave_to_maf <- function(pave_mutation_types, variant_type
     assertions::assert_character(variant_type)
     assertions::assert_equal(length(variant_type), length(pave_mutation_types))
     assertions::assert(all(variant_type %in% valid_variant_types), msg = "Invalid {.arg variant_type} values found ({unique(variant_type[!variant_type %in% valid_variant_types])}). Valid terms include {valid_variant_types}")
-
-    # Don't bother checking inframe argument as phasing in PAVE means you can't guess
-    # whether a mutation is in-frame by just looking at REF and ALT and instead
-    # whether mutation is inframe/nor is indicated by 'inframe_insertion/phased_inframe_insertion' consequence classifications
-    # (and their  deletion equivalents)
-    # if(!is.null(inframe)){
-    #   inframe_status_of_frameshift_variants <- inframe[pave_mutation_types == "frameshift_variant"]
-    #   assertions::assert(all(inframe_status_of_frameshift_variants == FALSE), msg = "Cannot have a frameshift_variant with inframe status: [{.strong {unique(inframe[pave_mutation_types == 'frameshift_variant' & inframe])}}]. Must be FALSE Either the variant classification or the inframe status must be incorrect")
-    # }
 
     incorrect_variant_types <- unique(variant_type[!variant_type[pave_mutation_types=="frameshift_variant"] %in% c("INS", "DEL")])
     assertions::assert(
@@ -327,20 +350,31 @@ mutation_types_convert_pave_to_maf <- function(pave_mutation_types, variant_type
     msg = "Variant Type must be {.strong INS or DEL} when pave_mutation_type is {.strong frameshift}. Not [{incorrect_variant_types_frameshift}]"
   )
 
-  maf_mutation_types <- data.table::fcase(
-    # For all PAVE classifications except frameshift convert to the equivalent MAF eterms
-    pave_mutation_types != "frameshift_variant", pave2maf_df[['MAF']][match(pave_mutation_types, pave2maf_df[['PAVE']])],
+  # Whether missing (empty string or NA_character) values should be set to 'Silent' of 'NA_character' in fcase statement below
+  if(missing_to_silent == TRUE)
+    maf_value_for_missing = "Silent"
+  else
+    maf_value_for_missing = NA_character_
 
+
+  maf_mutation_types <- data.table::fcase(
+    pave_mutation_types == "" | is.na(pave_mutation_types), maf_value_for_missing,
+
+    # For all PAVE classifications except frameshift convert to the equivalent MAF terms
+    pave_mutation_types != "frameshift_variant", pave2maf_df[['MAF']][match(pave_mutation_types, pave2maf_df[['PAVE']])],
     # For frameshift mutations use variant_type to add the info we need for conversion
     pave_mutation_types == "frameshift_variant" & variant_type == "DEL", "Frame_Shift_Del",
     pave_mutation_types == "frameshift_variant" & variant_type == "INS", "Frame_Shift_Ins",
     default=NA_character_
   )
 
-  assertions::assert_no_missing(maf_mutation_types)
+  assertions::assert_no_missing(maf_mutation_types, msg = "Should never see this. It means the fcase above is failing when mutation types are: {unique(maf_mutation_types[is.na(maf_mutation_types)])}")
 
   return(maf_mutation_types)
 }
+
+
+# Identification ----------------------------------------------------------
 
 
 #' Identify Mutation Dictionary Used
@@ -424,6 +458,9 @@ mutation_types_identify <- function(mutation_types, split_on_ampersand = TRUE, v
   else return('UNKNOWN')
 }
 
+
+
+# Consequence Ranking -----------------------------------------------------
 #' Select the most severe consequence (SO)
 #'
 #' @noRd
@@ -441,16 +478,18 @@ mutation_types_identify <- function(mutation_types, split_on_ampersand = TRUE, v
 #')
 #' #> Result:
 #' #> c("splice_acceptor_variant", "initiator_codon_variant")
-select_most_severe_consequence_so_list <- function(so_mutation_types_list){
+select_most_severe_consequence_so_list <- function(so_mutation_types_list, missing_is_valid = FALSE){
   if(!is.list(so_mutation_types_list)) cli::cli_abort("{.strong {so_mutation_types_list}} must be a list, not a {.strong {class(so_mutation_types_list)}}")
   priority_mappings = mutation_types_so_with_priority()
 
-  assert_all_mutations_are_valid_so(unlist(so_mutation_types_list))
+  assert_all_mutations_are_valid_so(unlist(so_mutation_types_list), missing_is_valid = missing_is_valid)
 
   vapply(
     X=so_mutation_types_list,
     FUN = function(so_mutation_types){
-      most_severe_term <- priority_mappings[priority_mappings[["Terms"]] %in% so_mutation_types,"Terms"][[1]]
+      most_severe_term <- head(priority_mappings[priority_mappings[["Terms"]] %in% so_mutation_types,"Terms"], n=1)
+      if(length(most_severe_term) == 0) return("")
+
       return(most_severe_term)
       # add test to make sure so_terms.tsv is sorted in order of EffectPriority since otherwise this doesn't work
     },
@@ -475,16 +514,20 @@ select_most_severe_consequence_so_list <- function(so_mutation_types_list){
 #')
 #' #> Result:
 #' #> c("phased_synonymous", "frameshift_variant")
-select_most_severe_consequence_pave_list <- function(pave_mutation_types_list){
+select_most_severe_consequence_pave_list <- function(pave_mutation_types_list, missing_is_valid = FALSE){
   if(!is.list(pave_mutation_types_list)) cli::cli_abort("{.strong {pave_mutation_types_list}} must be a list, not a {.strong {class(pave_mutation_types_list)}}")
   priority_mappings = mutation_types_pave_with_priority()
 
-  assert_all_mutations_are_valid_pave(unlist(pave_mutation_types_list))
+  assert_all_mutations_are_valid_pave(unlist(pave_mutation_types_list), missing_is_valid = missing_is_valid)
 
   vapply(
     X=pave_mutation_types_list,
     FUN = function(pave_mutation_types){
-      most_severe_term <- priority_mappings[priority_mappings[["Terms"]] %in% pave_mutation_types,"Terms"][[1]]
+      most_severe_term <- head(priority_mappings[priority_mappings[["Terms"]] %in% pave_mutation_types,"Terms"], n=1)
+
+      if(length(most_severe_term) == 0)
+        return("")
+
       return(most_severe_term)
       # add test to make sure so_terms.tsv is sorted in order of EffectPriority since otherwise this doesn't work
     },
@@ -511,12 +554,12 @@ select_most_severe_consequence_pave_list <- function(pave_mutation_types_list){
 #')
 #' #> Result:
 #' #> c("splice_acceptor_variant", "initiator_codon_variant")
-select_most_severe_consequence_so <- function(so_mutation_types){
+select_most_severe_consequence_so <- function(so_mutation_types, missing_is_valid = FALSE){
   assertions::assert_character(so_mutation_types)
 
   so_mutation_types_list  <- strsplit(so_mutation_types, split = "&")
 
-  select_most_severe_consequence_so_list(so_mutation_types_list)
+  select_most_severe_consequence_so_list(so_mutation_types_list, missing_is_valid = missing_is_valid)
 }
 
 #' Select the most severe consequence (PAVE)
@@ -538,17 +581,25 @@ select_most_severe_consequence_so <- function(so_mutation_types){
 #')
 #' #> Result:
 #' #> c("phased_synonymous", "frameshift_variant")
-select_most_severe_consequence_pave <- function(pave_mutation_types){
+select_most_severe_consequence_pave <- function(pave_mutation_types, missing_is_valid = FALSE){
   assertions::assert_character(pave_mutation_types)
 
   pave_mutation_types_list  <- strsplit(pave_mutation_types, split = "&")
 
-  select_most_severe_consequence_pave_list(pave_mutation_types_list)
+  select_most_severe_consequence_pave_list(pave_mutation_types_list, missing_is_valid = missing_is_valid)
 }
 
 
-assert_all_mutations_are_valid_so <- function(mutation_types){
+# Validation (assertions) --------------------------------------------------------------
+
+
+assert_all_mutations_are_valid_so <- function(mutation_types, missing_is_valid = FALSE){
   unique_mutation_types <- unique(unlist(strsplit(mutation_types, split = "&")))
+
+  # Allow NAs if missing_is_valid
+  if(missing_is_valid)
+    unique_mutation_types <- na.omit(unique_mutation_types)
+
   unknown_mutation_types <- unique_mutation_types[!unique_mutation_types %in% mutation_types_so()]
   if(length(unknown_mutation_types) > 0 ){
     cli::cli_abort(
@@ -561,9 +612,14 @@ assert_all_mutations_are_valid_so <- function(mutation_types){
   return(invisible(TRUE))
 }
 
-assert_all_mutations_are_valid_pave <- function(mutation_types){
+assert_all_mutations_are_valid_pave <- function(mutation_types, missing_is_valid = FALSE){
   unique_mutation_types <- unique(unlist(strsplit(mutation_types, split = "&")))
-  unknown_mutation_types <- unique_mutation_types[!unique_mutation_types %in% mutation_types_pave()]
+
+  # Allow NAs if missing_is_valid
+  if(missing_is_valid)
+    unique_mutation_types <- na.omit(unique_mutation_types)
+
+  unknown_mutation_types <- unique_mutation_types[!unique_mutation_types %in% mutation_types_pave()] # Add missing logic to
   if(length(unknown_mutation_types) > 0 ){
     cli::cli_abort(
       c(

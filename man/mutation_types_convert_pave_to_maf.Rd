@@ -8,6 +8,7 @@ mutation_types_convert_pave_to_maf(
   pave_mutation_types,
   variant_type = NULL,
   split_on_ampersand = TRUE,
+  missing_to_silent = FALSE,
   verbose = TRUE
 )
 }
