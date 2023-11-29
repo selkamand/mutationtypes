@@ -8,6 +8,7 @@ mutation_types_convert_pave_to_maf(
   pave_mutation_types,
   variant_type = NULL,
   split_on_ampersand = TRUE,
+  missing_to_silent = FALSE,
   verbose = TRUE
 )
 }
@@ -17,6 +18,8 @@ mutation_types_convert_pave_to_maf(
 \item{variant_type}{a vector describing each mutations type. Valid elements include: "SNP", "DNP", "TNP", "ONP", "DEL", "INS". Used to map frameshift_variant to more specific MAF columns (character)}
 
 \item{split_on_ampersand}{should '&' separated SO terms be automatically converted to single SO terms based on highest severity? (flag)}
+
+\item{missing_to_silent}{should missing (NA) or empty ('') mutation types be converted to 'Silent' mutations?}
 
 \item{verbose}{verbose (flag)}
 }

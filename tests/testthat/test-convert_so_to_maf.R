@@ -74,6 +74,28 @@ test_that("mutation_types_convert_so_to_maf works", {
     mutation_types_convert_so_to_maf(c("stop_lost&missense_variant", "stop_gained&upstream_gene_variant&downstream_gene_variant"), verbose = TRUE) |> suppressMessages(),
     c("Nonstop_Mutation","Nonsense_Mutation")
   )
+
+  # Throw an error if you supply empty strings as mutation_types
+  expect_error(
+    mutation_types_convert_so_to_maf(so_mutation_types = "") |> suppressMessages(),
+    regexp = "Found 1 variant with no mutation type value", fixed=TRUE
+  )
+
+  # Throw an error if you supply missing (NA) values in mutation_types
+  expect_error(
+    mutation_types_convert_so_to_maf(so_mutation_types = NA_character_) |> suppressMessages(),
+    regexp = "'so_mutation_types' must have no missing values! Found 1", fixed=TRUE
+  )
+
+  # Return SILENT if you supply empty strings (or missing NA values) as mutation_types and set  missing_to_silent = TRUE
+  expect_equal(
+    mutation_types_convert_so_to_maf(so_mutation_types = "", missing_to_silent = TRUE) |> suppressMessages(),
+    "Silent"
+  )
+  expect_equal(
+    mutation_types_convert_so_to_maf(so_mutation_types = NA_character_, missing_to_silent = TRUE) |> suppressMessages(),
+    "Silent"
+  )
 })
 
 test_that("mutation_types_convert_so_to_maf() throws appropriate errors", {

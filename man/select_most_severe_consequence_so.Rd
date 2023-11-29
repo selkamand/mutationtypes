@@ -4,10 +4,12 @@
 \alias{select_most_severe_consequence_so}
 \title{Select the most severe consequence (SO)}
 \usage{
-select_most_severe_consequence_so(so_mutation_types)
+select_most_severe_consequence_so(so_mutation_types, missing_is_valid = FALSE)
 }
 \arguments{
 \item{so_mutation_types}{a character vector of SO terms, where multiple so_mutation_types per field are & delimited, and you want to choose the most severe consequence .}
+
+\item{missing_is_valid}{should NA values be considered valid mutation classes or should they throw an error? (flag)}
 }
 \value{
 the most severe consequence for each element in so_mutation_types
