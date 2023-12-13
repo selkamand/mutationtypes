@@ -1,0 +1,28 @@
+---
+name: License Compliance Check
+
+on:
+  push:
+    branches-ignore: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  license-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Generate License Report
+        uses: insightsengineering/r-license-report@v1
+        with:
+          # R package root path, in case your R package is within a subdirectory of the repo
+          path: "."
+          # Whether you also want the report as an `html` file
+          as_html: true
+      - name: Upload PDF Report
+        uses: actions/upload-artifact@v2
+        with:
+          name: license-report.pdf
+          path: license-report.pdf
