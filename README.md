@@ -12,6 +12,17 @@ status](https://www.r-pkg.org/badges/version/mutationtypes)](https://CRAN.R-proj
 [![R-CMD-check](https://github.com/selkamand/mutationtypes/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/selkamand/mutationtypes/actions/workflows/R-CMD-check.yaml)
 [![Codecov test
 coverage](https://codecov.io/gh/selkamand/mutationtypes/branch/master/graph/badge.svg)](https://app.codecov.io/gh/selkamand/mutationtypes?branch=master)
+[![Code
+size](https://img.shields.io/github/languages/code-size/selkamand/mutationtypes.svg)](https://github.com/selkamand/mutationtypes)
+[![Dependencies](https://tinyverse.netlify.com/badge/mutationtypes)](https://cran.r-project.org/package=mutationtypes)
+![GitHub closed
+issues](https://img.shields.io/github/issues-closed/selkamand/mutationtypes)
+[![Last
+commit](https://img.shields.io/github/languages/code-size/selkamand/mutationtypes.svg)](https://github.com/selkamand/mutationtypes)
+[![Monthly
+Downloads](http://cranlogs.r-pkg.org/badges/last-month/mutationtypes)](https://cran.r-project.org/package=mutationtypes)
+[![Grand
+Total](http://cranlogs.r-pkg.org/badges/grand-total/mutationtypes)](https://cran.r-project.org/package=mutationtypes)
 <!-- badges: end -->
 
 Say you want to describe the impact of a mutation. There exists several
@@ -178,7 +189,7 @@ mutation_types_pave()
 #>  [9] "inframe_insertion"                  "inframe_deletion"                  
 #> [11] "phased_inframe_insertion"           "phased_inframe_deletion"           
 #> [13] "phased_missense"                    "stop_gained"                       
-#> [15] "frameshift_variant"                         "start_lost"                        
+#> [15] "frameshift_variant"                 "start_lost"                        
 #> [17] "stop_lost"                          "splice_donor_variant"              
 #> [19] "splice_acceptor_variant"
 
