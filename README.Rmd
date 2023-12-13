@@ -20,6 +20,12 @@ knitr::opts_chunk$set(
 [![CRAN status](https://www.r-pkg.org/badges/version/mutationtypes)](https://CRAN.R-project.org/package=mutationtypes)
 [![R-CMD-check](https://github.com/selkamand/mutationtypes/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/selkamand/mutationtypes/actions/workflows/R-CMD-check.yaml)
 [![Codecov test coverage](https://codecov.io/gh/selkamand/mutationtypes/branch/master/graph/badge.svg)](https://app.codecov.io/gh/selkamand/mutationtypes?branch=master)
+[![Code size](https://img.shields.io/github/languages/code-size/selkamand/mutationtypes.svg)](https://github.com/selkamand/mutationtypes)
+[![Dependencies](https://tinyverse.netlify.com/badge/mutationtypes)](https://cran.r-project.org/package=mutationtypes)
+![GitHub closed issues](https://img.shields.io/github/issues-closed/selkamand/mutationtypes)
+[![Last commit](https://img.shields.io/github/languages/code-size/selkamand/mutationtypes.svg)](https://github.com/selkamand/mutationtypes)
+[![Monthly Downloads](http://cranlogs.r-pkg.org/badges/last-month/mutationtypes)](https://cran.r-project.org/package=mutationtypes)
+[![Grand Total](http://cranlogs.r-pkg.org/badges/grand-total/mutationtypes)](https://cran.r-project.org/package=mutationtypes)
 <!-- badges: end -->
 
 Say you want to describe the impact of a mutation. There exists several dictionaries you could use, including
