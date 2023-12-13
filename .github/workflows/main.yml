@@ -15,3 +15,8 @@ jobs:
         uses: actions/checkout@v3
       - name: License Report
         uses: insightsengineering/r-license-report@v1
+      - name: Upload PDF Report
+        uses: actions/upload-artifact@v2
+        with:
+          name: license-report.pdf
+          path: license-report.pdf
