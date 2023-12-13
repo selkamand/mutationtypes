@@ -7,7 +7,7 @@
 mutation_types_pave()
 }
 \value{
-valid MAF terms (character)
+valid PAVE terms (character)
 }
 \description{
 PAVE is a newer annotation software that supports annotaiton of mainly just a subset of SO terms,

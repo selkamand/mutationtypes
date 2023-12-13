@@ -17,7 +17,7 @@ mutation_types_convert_pave_to_maf(
 
 \item{variant_type}{a vector describing each mutations type. Valid elements include: "SNP", "DNP", "TNP", "ONP", "DEL", "INS". Used to map frameshift_variant to more specific MAF columns (character)}
 
-\item{split_on_ampersand}{should '&' separated SO terms be automatically converted to single SO terms based on highest severity? (flag)}
+\item{split_on_ampersand}{should '&' separated PAVE terms be automatically converted to single PAVE terms based on highest severity? (flag)}
 
 \item{missing_to_silent}{should missing (NA) or empty ('') mutation types be converted to 'Silent' mutations?}
 
@@ -30,5 +30,7 @@ matched MAF variant classification terms (character)
 Convert PAVE Mutation Types to MAF
 }
 \examples{
-mutation_types_convert_so_to_maf(c('INTRAGENIC', 'INTRAGENIC', 'intergenic_region'))
+mutation_types_convert_pave_to_maf(
+  c('upstream_gene_variant', 'stop_lost', 'splice_acceptor_variant')
+)
 }

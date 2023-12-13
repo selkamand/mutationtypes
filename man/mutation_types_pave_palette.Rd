@@ -13,5 +13,5 @@ named vector. Names are PAVE terms. Values are colors
 Palettes: PAVE
 }
 \examples{
-mutation_types_so_palette()
+mutation_types_pave_palette()
 }

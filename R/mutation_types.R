@@ -88,7 +88,7 @@ mutation_types_maf <- function(){
 #' PAVE is a newer annotation software that supports annotaiton of mainly just a subset of SO terms,
 #' but with a couple of important additions to indicate when a non-obvious consequence can be found thanks to phasing.
 #'
-#' @return valid MAF terms (character)
+#' @return valid PAVE terms (character)
 #' @export
 #'
 #' @examples
@@ -100,6 +100,7 @@ mutation_types_pave <- function(){
     sep = "\t"
   )[['Terms']]
 }
+
 #' Palettes: MAF
 #'
 #' @return named vector. Names are MAF terms. Values are colors
@@ -143,7 +144,7 @@ mutation_types_so_palette <- function(){
 #' @export
 #'
 #' @examples
-#' mutation_types_so_palette()
+#' mutation_types_pave_palette()
 mutation_types_pave_palette <- function(){
   df <- utils::read.csv(
     file = system.file('pave_terms.tsv', package = "mutationtypes"),
@@ -276,7 +277,7 @@ mutation_types_convert_so_to_maf <- function(so_mutation_types, variant_type = N
 #' Convert PAVE Mutation Types to MAF
 #'
 #' @param pave_mutation_types a vector of PAVE terms you want to convert to MAF variant classifications (character)
-#' @param split_on_ampersand should '&' separated SO terms be automatically converted to single SO terms based on highest severity? (flag)
+#' @param split_on_ampersand should '&' separated PAVE terms be automatically converted to single PAVE terms based on highest severity? (flag)
 #' @param variant_type a vector describing each mutations type. Valid elements include: "SNP", "DNP", "TNP", "ONP", "DEL", "INS". Used to map frameshift_variant to more specific MAF columns (character)
 #' @inheritParams mutation_types_convert_so_to_maf
 #' @param verbose verbose (flag)
@@ -284,7 +285,9 @@ mutation_types_convert_so_to_maf <- function(so_mutation_types, variant_type = N
 #' @export
 #'
 #' @examples
-#' mutation_types_convert_so_to_maf(c('INTRAGENIC', 'INTRAGENIC', 'intergenic_region'))
+#' mutation_types_convert_pave_to_maf(
+#'   c('upstream_gene_variant', 'stop_lost', 'splice_acceptor_variant')
+#' )
 mutation_types_convert_pave_to_maf <- function(pave_mutation_types, variant_type = NULL, split_on_ampersand = TRUE, missing_to_silent = FALSE, verbose = TRUE){
 
   # Assertions
