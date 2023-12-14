@@ -4,11 +4,11 @@
 \name{mutationtypes-package}
 \alias{mutationtypes}
 \alias{mutationtypes-package}
-\title{mutationtypes: Tools to Validate and Convert Mutational Impacts Using Standard Genomic Dictionaries}
+\title{mutationtypes: Validate and Convert Mutational Impacts Using Standard Genomic Dictionaries}
 \description{
 \if{html}{\figure{logo.png}{options: style='float: right' alt='logo' width='120'}}
 
-Check concordance of a vector of mutation impacts with standard dictionaries such as Sequence Ontology (SO), Mutation Annotation Format (MAF) or Prediction and Annotation of Variant Effects (PAVE). It enables conversion between SO/PAVE and MAF terms and selection of the most severe consequence where multiple ampersand (&) delimited impacts are given.
+Check concordance of a vector of mutation impacts with standard dictionaries such as Sequence Ontology (SO) \url{http://www.sequenceontology.org/}, Mutation Annotation Format (MAF) \url{https://docs.gdc.cancer.gov/Encyclopedia/pages/Mutation_Annotation_Format_TCGAv2/} or Prediction and Annotation of Variant Effects (PAVE) \url{https://github.com/hartwigmedical/hmftools/tree/master/pave}. It enables conversion between SO/PAVE and MAF terms and selection of the most severe consequence where multiple ampersand (&) delimited impacts are given.
 }
 \seealso{
 Useful links:

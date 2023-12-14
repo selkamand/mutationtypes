@@ -1,12 +1,12 @@
 Package: mutationtypes
-Title: Tools to Validate and Convert Mutational Impacts Using Standard Genomic Dictionaries
+Title: Validate and Convert Mutational Impacts Using Standard Genomic Dictionaries
 Version: 0.0.1
 Authors@R: c(
       person("Sam", "El-Kamand", email = "sam.elkamand@gmail.com", role = c("aut", "cre"),
          comment = c(ORCID = "0000-0003-2270-8088")),
       person("Children's Cancer Institute Australia", role = "cph")
   )
-Description: Check concordance of a vector of mutation impacts with standard dictionaries such as Sequence Ontology (SO), Mutation Annotation Format (MAF) or Prediction and Annotation of Variant Effects (PAVE). 
+Description: Check concordance of a vector of mutation impacts with standard dictionaries such as Sequence Ontology (SO) <http://www.sequenceontology.org/>, Mutation Annotation Format (MAF) <https://docs.gdc.cancer.gov/Encyclopedia/pages/Mutation_Annotation_Format_TCGAv2/> or Prediction and Annotation of Variant Effects (PAVE) <https://github.com/hartwigmedical/hmftools/tree/master/pave>. 
   It enables conversion between SO/PAVE and MAF terms and selection of the most severe consequence where multiple ampersand (&) delimited impacts are given.
 License: LGPL (>= 3)
 Encoding: UTF-8
