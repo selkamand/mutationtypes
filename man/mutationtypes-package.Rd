@@ -19,7 +19,12 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Sam El-Kamand \email{sam.elkamand@gmail.com} (\href{https://orcid.org/0000-0003-2270-8088}{ORCID}) [copyright holder]
+\strong{Maintainer}: Sam El-Kamand \email{sam.elkamand@gmail.com} (\href{https://orcid.org/0000-0003-2270-8088}{ORCID})
+
+Other contributors:
+\itemize{
+  \item Children's Cancer Institute Australia [copyright holder]
+}
 
 }
 \keyword{internal}

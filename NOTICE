@@ -1,0 +1,6 @@
+cli | 3.2.0 | MIT + file LICENSE
+data.table | 1.14.2 | MPL-2.0 | file LICENSE
+glue | 1.6.2 | MIT + file LICENSE
+methods | 4.1.2 | Part of R 4.1.2
+stats | 4.1.2 | Part of R 4.1.2
+utils | 4.1.2 | Part of R 4.1.2
