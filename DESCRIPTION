@@ -1,6 +1,6 @@
 Package: mutationtypes
 Title: Validate and Convert Mutational Impacts Using Standard Genomic Dictionaries
-Version: 0.0.1
+Version: 0.0.1.9000
 Authors@R: c(
       person("Sam", "El-Kamand", email = "sam.elkamand@gmail.com", role = c("aut", "cre"),
          comment = c(ORCID = "0000-0003-2270-8088")),
