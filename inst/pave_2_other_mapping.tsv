@@ -1,0 +1,20 @@
+PAVE	MAF	SO	Genic	Coding
+upstream_gene_variant	5'Flank	upstream_gene_variant	intergenic	noncoding
+intron_variant	Intron	intron_variant	genic	noncoding
+5_prime_UTR_variant	5'UTR	5_prime_UTR_variant	genic	noncoding
+3_prime_UTR_variant	3'UTR	3_prime_UTR_variant	genic	noncoding
+non_coding_transcript_exon_variant	RNA	non_coding_transcript_exon_variant	genic	noncoding
+synonymous_variant	Silent	synonymous_variant	genic	coding
+phased_synonymous	Silent	synonymous_variant	genic	coding
+missense_variant	Missense_Mutation	missense_variant	genic	coding
+inframe_insertion	In_Frame_Ins	inframe_insertion	genic	coding
+inframe_deletion	In_Frame_Del	inframe_deletion	genic	coding
+phased_inframe_insertion	In_Frame_Ins	inframe_insertion	genic	coding
+phased_inframe_deletion	In_Frame_Del	inframe_deletion	genic	coding
+phased_missense	Missense_Mutation	missense_variant	genic	coding
+stop_gained	Nonsense_Mutation	stop_gained	genic	coding
+frameshift_variant		frameshift_variant	genic	coding
+start_lost	Translation_Start_Site	start_lost	genic	coding
+stop_lost	Nonstop_Mutation	stop_lost	genic	coding
+splice_donor_variant	Splice_Site	splice_donor_variant	genic	noncoding
+splice_acceptor_variant	Splice_Site	splice_acceptor_variant	genic	noncoding

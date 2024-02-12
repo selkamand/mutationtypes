@@ -101,4 +101,7 @@ mutation_types_pave()
 
 # Get Palettes for MAF/SO/PAVE terms
 mutation_types_maf_palette()
+
+# Classify variants as 'genic' or intergenic based on variant consequence
+mutation_types_classify_genic_mutations(c('upstream_gene_variant', 'phased_inframe_insertion', 'phased_missense'))
 ```
