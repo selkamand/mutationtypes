@@ -16,6 +16,8 @@ mutation_types_convert_pave_to_genic(
 
 \item{split_on_ampersand}{should '&' separated PAVE terms be automatically converted to single PAVE terms based on highest severity? (flag)}
 
+\item{missing_to_intergenic}{should we assume missing values are 'intergenic' (flag)}
+
 \item{verbose}{verbose (flag)}
 }
 \value{

@@ -2,7 +2,7 @@
 
 # Unexposed Data Loading Functions ----------------------------------------
 mutation_types_mapping_so_to_other <- function(col = c("MAF", "Genic", "Coding")){
-  col <- rlang::arg_match(col)
+  col <- match.arg(col, choices = col)
 
   df <- utils::read.csv(
     file = system.file('so_2_other_mapping.tsv', package = "mutationtypes"),
@@ -18,7 +18,7 @@ mutation_types_mapping_so_to_other <- function(col = c("MAF", "Genic", "Coding")
 }
 
 mutation_types_mapping_pave_to_other <- function(col = c("MAF", "SO", "Genic", "Coding")){
-  col <- rlang::arg_match(col)
+  col <- match.arg(col, choices = col)
 
   df <- utils::read.csv(
     file = system.file('pave_2_other_mapping.tsv', package = "mutationtypes"),
@@ -392,7 +392,7 @@ mutation_types_convert_pave_to_maf <- function(pave_mutation_types, variant_type
 #'
 #' @param pave_mutation_types a vector of PAVE terms you want to convert to genic/intergenic classifications (character)
 #' @param split_on_ampersand should '&' separated PAVE terms be automatically converted to single PAVE terms based on highest severity? (flag)
-#' @inheritParams mutation_types_convert_so_to_maf
+#' @param missing_to_intergenic should we assume missing values are 'intergenic' (flag)
 #' @param verbose verbose (flag)
 #' @return whether each variant is 'genic' or 'intergenic' (character)
 #' @export
@@ -449,7 +449,7 @@ mutation_types_convert_pave_to_genic <- function(pave_mutation_types, split_on_a
 #'
 #' @param pave_mutation_types a vector of PAVE terms you want to convert to coding/nocoding classifications (character)
 #' @param split_on_ampersand should '&' separated PAVE terms be automatically converted to single PAVE terms based on highest severity? (flag)
-#' @inheritParams mutation_types_convert_so_to_maf
+#' @param missing_to_noncoding should we assume missing values are 'noncoding' (flag)
 #' @param verbose verbose (flag)
 #' @return whether each variant is 'coding' or 'noncoding' (character)
 #' @export
