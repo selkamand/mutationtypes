@@ -1,31 +1,38 @@
 
 
 # Unexposed Data Loading Functions ----------------------------------------
-mutation_types_mapping_so_to_maf <- function(){
+mutation_types_mapping_so_to_other <- function(col = c("MAF", "Genic", "Coding")){
+  col <- match.arg(col, choices = col)
+
   df <- utils::read.csv(
-    file = system.file('so_2_maf_mapping.tsv', package = "mutationtypes"),
-    header = TRUE,
-    sep = "\t"
-    )
-
-  # Replace any blanks with NAs
-  df[['MAF']] <- ifelse(nchar(df[['MAF']]) == 0, yes = NA, no = df[['MAF']])
-
-  return(df)
-}
-
-mutation_types_mapping_pave_to_maf <- function(){
-  df <- utils::read.csv(
-    file = system.file('pave_2_maf_mapping.tsv', package = "mutationtypes"),
+    file = system.file('so_2_other_mapping.tsv', package = "mutationtypes"),
     header = TRUE,
     sep = "\t"
   )
 
   # Replace any blanks with NAs
-  df[['MAF']] <- ifelse(nchar(df[['MAF']]) == 0, yes = NA, no = df[['MAF']])
+  df[[col]] <- ifelse(nchar(df[[col]]) == 0, yes = NA, no = df[[col]])
+  df <- df[c('SO', col)]
 
   return(df)
 }
+
+mutation_types_mapping_pave_to_other <- function(col = c("MAF", "SO", "Genic", "Coding")){
+  col <- match.arg(col, choices = col)
+
+  df <- utils::read.csv(
+    file = system.file('pave_2_other_mapping.tsv', package = "mutationtypes"),
+    header = TRUE,
+    sep = "\t"
+  )
+
+  # Replace any blanks with NAs
+  df[[col]] <- ifelse(nchar(df[[col]]) == 0, yes = NA, no = df[[col]])
+  df <- df[c('PAVE', col)]
+
+  return(df)
+}
+
 
 
 
@@ -159,7 +166,7 @@ mutation_types_pave_palette <- function(){
 
 
 so_terms_without_mapping <- function(){
-  so2maf_df <- mutation_types_mapping_so_to_maf()
+  so2maf_df <- mutation_types_mapping_so_to_other("MAF")
   stats::na.omit(unique(so2maf_df[['SO']][is.na(so2maf_df[['MAF']])]))
 }
 
@@ -204,7 +211,7 @@ mutation_types_convert_so_to_maf <- function(so_mutation_types, variant_type = N
   assert_all_mutations_are_valid_so(so_mutation_types_uniq, missing_is_valid = missing_to_silent)
 
   if(verbose) cli::cli_alert_success('Supplied mutation types are valid so terms')
-  so2maf_df <- mutation_types_mapping_so_to_maf()
+  so2maf_df <- mutation_types_mapping_so_to_other("MAF")
 
   valid_variant_types = c("SNP", "DNP", "TNP", "ONP", "DEL", "INS")
   if("frameshift_variant" %in% so_mutation_types){
@@ -314,7 +321,7 @@ mutation_types_convert_pave_to_maf <- function(pave_mutation_types, variant_type
   assert_all_mutations_are_valid_pave(pave_mutation_types_uniq, missing_is_valid = missing_to_silent)
 
   if(verbose) cli::cli_alert_success('Supplied mutation types are valid pave terms')
-  pave2maf_df <- mutation_types_mapping_pave_to_maf()
+  pave2maf_df <- mutation_types_mapping_pave_to_other("MAF")
 
   valid_variant_types = c("SNP", "DNP", "TNP", "ONP", "DEL", "INS")
   if("frameshift_variant" %in% pave_mutation_types){
@@ -379,8 +386,120 @@ mutation_types_convert_pave_to_maf <- function(pave_mutation_types, variant_type
 }
 
 
-# Identification ----------------------------------------------------------
+#' Convert PAVE Mutation Types to Genic
+#'
+#' Convert PAVE mutation types to whether a variant is 'genic' or 'intergenic'
+#'
+#' @param pave_mutation_types a vector of PAVE terms you want to convert to genic/intergenic classifications (character)
+#' @param split_on_ampersand should '&' separated PAVE terms be automatically converted to single PAVE terms based on highest severity? (flag)
+#' @param missing_to_intergenic should we assume missing values are 'intergenic' (flag)
+#' @param verbose verbose (flag)
+#' @return whether each variant is 'genic' or 'intergenic' (character)
+#' @export
+#'
+#' @examples
+#' mutation_types_convert_pave_to_maf(
+#'   c('upstream_gene_variant', 'stop_lost', 'splice_acceptor_variant')
+#' )
+mutation_types_convert_pave_to_genic <- function(pave_mutation_types, split_on_ampersand = TRUE, missing_to_intergenic = FALSE, verbose = TRUE){
+  # Assertions
+  assertions::assert_character(pave_mutation_types)
+  if (!missing_to_intergenic) assertions::assert_no_missing(pave_mutation_types)
 
+  if (!missing_to_intergenic)
+    assertions::assert(
+      all(nchar(pave_mutation_types) > 0),
+      msg = "Found {sum(nchar(pave_mutation_types) == 0)} variant{?s} with no mutation type value (empty string). There are 2 possible solutions\f
+      1. Ensure all variants have a consequence OR\f
+      2. If appropriate set {.arg missing_to_intergenic = TRUE} to assume all variants without consequences are intergenic"
+    )
+
+
+  # Select Most Severe Consequence
+  if (split_on_ampersand)
+    pave_mutation_types <- select_most_severe_consequence_pave(pave_mutation_types, missing_is_valid = missing_to_intergenic)
+
+  pave_mutation_types_uniq <- unique(pave_mutation_types)
+
+
+  # Check input mutation types are valid pave terms
+  if (verbose) cli::cli_h2('Validating Input')
+  assert_all_mutations_are_valid_pave(pave_mutation_types_uniq, missing_is_valid = missing_to_intergenic)
+  if (verbose) cli::cli_alert_success('Supplied mutation types are valid pave terms')
+
+  # Retrive Map of Pave Mutation Types to Genic / InterGenic
+  pave2genic_df <- mutation_types_mapping_pave_to_other("Genic")
+
+
+  # Whether missing (empty string or NA_character) values should be set to 'Silent' or 'NA_character'
+  value_for_missing <- if (missing_to_intergenic) "intergenic" else NA_character_
+
+  # Identify genic_status
+  genic_status <-  pave2genic_df[['Genic']][match(pave_mutation_types, pave2genic_df[['PAVE']])]
+  genic_status[pave_mutation_types == "" | is.na(pave_mutation_types)] <- value_for_missing
+
+  # Return vector describing whether mutation is 'genic' or 'intergenic'
+  return(genic_status)
+}
+
+
+#' Convert PAVE Mutation Types to Coding/Noncoding
+#'
+#' Convert PAVE mutation types to whether a variant is 'coding' or 'noncoding'
+#'
+#' @param pave_mutation_types a vector of PAVE terms you want to convert to coding/nocoding classifications (character)
+#' @param split_on_ampersand should '&' separated PAVE terms be automatically converted to single PAVE terms based on highest severity? (flag)
+#' @param missing_to_noncoding should we assume missing values are 'noncoding' (flag)
+#' @param verbose verbose (flag)
+#' @return whether each variant is 'coding' or 'noncoding' (character)
+#' @export
+#'
+#' @examples
+#' mutation_types_convert_pave_to_maf(
+#'   c('upstream_gene_variant', 'stop_lost', 'splice_acceptor_variant')
+#' )
+mutation_types_convert_pave_to_coding <- function(pave_mutation_types, split_on_ampersand = TRUE, missing_to_noncoding = FALSE, verbose = TRUE){
+  # Assertions
+  assertions::assert_character(pave_mutation_types)
+  if (!missing_to_noncoding) assertions::assert_no_missing(pave_mutation_types)
+
+  if (!missing_to_noncoding)
+    assertions::assert(
+      all(nchar(pave_mutation_types) > 0),
+      msg = "Found {sum(nchar(pave_mutation_types) == 0)} variant{?s} with no mutation type value (empty string). There are 2 possible solutions\f
+      1. Ensure all variants have a consequence OR\f
+      2. If appropriate set {.arg missing_to_noncoding = TRUE} to assume all variants without consequences are noncoding"
+    )
+
+
+  # Select Most Severe Consequence
+  if (split_on_ampersand)
+    pave_mutation_types <- select_most_severe_consequence_pave(pave_mutation_types, missing_is_valid = missing_to_noncoding)
+
+  pave_mutation_types_uniq <- unique(pave_mutation_types)
+
+
+  # Check input mutation types are valid pave terms
+  if (verbose) cli::cli_h2('Validating Input')
+  assert_all_mutations_are_valid_pave(pave_mutation_types_uniq, missing_is_valid = missing_to_noncoding)
+  if (verbose) cli::cli_alert_success('Supplied mutation types are valid pave terms')
+
+  # Retrive Map of Pave Mutation Types to Coding / Noncoding
+  pave2coding_df <- mutation_types_mapping_pave_to_other("Coding")
+
+
+  # Whether missing (empty string or NA_character) values should be set to 'Silent' or 'NA_character'
+  value_for_missing <- if (missing_to_noncoding) "noncoding" else NA_character_
+
+  # Identify coding status
+  coding_status <- pave2coding_df[['Coding']][match(pave_mutation_types, pave2coding_df[['PAVE']])]
+  coding_status[pave_mutation_types == "" | is.na(pave_mutation_types)] <- value_for_missing
+
+  # Return vector describing whether mutation is 'coding' or 'noncoding'
+  return(coding_status)
+}
+
+# Identification ----------------------------------------------------------
 
 #' Identify Mutation Dictionary Used
 #'
@@ -459,8 +578,6 @@ mutation_types_identify <- function(mutation_types, split_on_ampersand = TRUE, v
       cli::cli_h2('Unknown Mutation Types')
       cli::cli_alert('{unclassified_mutation_types}')
     }
-
-
   }
 
   if(n_so_classified_mutations == n_uniq_mutation_types) return('SO')
@@ -600,6 +717,11 @@ select_most_severe_consequence_pave <- function(pave_mutation_types, missing_is_
 
   select_most_severe_consequence_pave_list(pave_mutation_types_list, missing_is_valid = missing_is_valid)
 }
+
+
+
+# Classify ----------------------------------------------------------------
+# mutation_types_classify_genic_mutations
 
 
 # Validation (assertions) --------------------------------------------------------------
