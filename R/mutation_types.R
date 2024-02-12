@@ -1,15 +1,18 @@
 
 
 # Unexposed Data Loading Functions ----------------------------------------
-mutation_types_mapping_so_to_maf <- function(){
+mutation_types_mapping_so_to_other <- function(col = c("MAF", "Genic", "Coding")){
+  col <- rlang::arg_match(col)
+
   df <- utils::read.csv(
-    file = system.file('so_2_maf_mapping.tsv', package = "mutationtypes"),
+    file = system.file('so_2_other_mapping.tsv', package = "mutationtypes"),
     header = TRUE,
     sep = "\t"
-    )
+  )
 
   # Replace any blanks with NAs
-  df[['MAF']] <- ifelse(nchar(df[['MAF']]) == 0, yes = NA, no = df[['MAF']])
+  df[[col]] <- ifelse(nchar(df[[col]]) == 0, yes = NA, no = df[[col]])
+  df <- df[c('SO', col)]
 
   return(df)
 }
@@ -163,7 +166,7 @@ mutation_types_pave_palette <- function(){
 
 
 so_terms_without_mapping <- function(){
-  so2maf_df <- mutation_types_mapping_so_to_maf()
+  so2maf_df <- mutation_types_mapping_so_to_other("MAF")
   stats::na.omit(unique(so2maf_df[['SO']][is.na(so2maf_df[['MAF']])]))
 }
 
@@ -208,7 +211,7 @@ mutation_types_convert_so_to_maf <- function(so_mutation_types, variant_type = N
   assert_all_mutations_are_valid_so(so_mutation_types_uniq, missing_is_valid = missing_to_silent)
 
   if(verbose) cli::cli_alert_success('Supplied mutation types are valid so terms')
-  so2maf_df <- mutation_types_mapping_so_to_maf()
+  so2maf_df <- mutation_types_mapping_so_to_other("MAF")
 
   valid_variant_types = c("SNP", "DNP", "TNP", "ONP", "DEL", "INS")
   if("frameshift_variant" %in% so_mutation_types){

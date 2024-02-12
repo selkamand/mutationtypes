@@ -1,27 +1,34 @@
-test_that("mutation_types_mapping_so_to_maf works", {
+test_that("mutation_types_mapping_so_to_other works", {
 
   # Runs without error
   expect_error(
-    mutation_types_mapping_so_to_maf(),
+    mutation_types_mapping_so_to_other("MAF"),
     NA
   )
 
   # Returns data.frame
   expect_s3_class(
-    mutation_types_mapping_so_to_maf(),
+    mutation_types_mapping_so_to_other("MAF"),
     "data.frame"
   )
 
   # Columns named appropriately
   expect_named(
-    mutation_types_mapping_so_to_maf(),
+    mutation_types_mapping_so_to_other("MAF"),
     c("SO", "MAF")
   )
 
   # Expect at least some reasonable number of rows
   expect_true(
-    nrow(mutation_types_mapping_so_to_maf()) > 10
+    nrow(mutation_types_mapping_so_to_other("MAF")) > 10
   )
+
+  # All types are retrievable
+  # Runs without error and return data.frame
+  expect_s3_class(mutation_types_mapping_so_to_other("Coding"), "data.frame")
+  expect_s3_class(mutation_types_mapping_so_to_other("Genic"), "data.frame")
+
+
 })
 
 
@@ -51,7 +58,7 @@ test_that("mutation_types_mapping_pave_to_other works", {
   )
 
   # All types are retrievable
-  # Runs without error
+  # Runs without error and return data.frame
   expect_s3_class(mutation_types_mapping_pave_to_other("MAF"), "data.frame")
   expect_s3_class(mutation_types_mapping_pave_to_other("SO"), "data.frame")
   expect_s3_class(mutation_types_mapping_pave_to_other("Coding"), "data.frame")
@@ -128,7 +135,7 @@ test_that("mutation_types_so, mutation_types_maf & mutation_types_pave work",{
 
 test_that("uniform set of SO and MAF terms included in all files", {
 
-  df_mapping <- mutation_types_mapping_so_to_maf()
+  df_mapping <- mutation_types_mapping_so_to_other("MAF")
   vec_so <- mutation_types_so()
   vec_maf <- mutation_types_maf()
 
