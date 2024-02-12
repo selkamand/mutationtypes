@@ -31,19 +31,19 @@ test_that("mutation_types_convert_pave_to_genic works", {
 
   expect_equal(
     mutation_types_convert_pave_to_genic("missense_variant", verbose = TRUE) |> suppressMessages(),
-    "genic"
+    "intragenic"
   )
 
   # Test & seperated consequences are resolved correctly
   expect_equal(
     mutation_types_convert_pave_to_genic("missense_variant&splice_acceptor_variant", verbose = TRUE) |> suppressMessages(),
-    "genic"
+    "intragenic"
   )
 
   # Test & seperated consequences are resolved correctly
   expect_equal(
     mutation_types_convert_pave_to_genic(c("stop_lost&missense_variant", "stop_gained&upstream_gene_variant&phased_synonymous"), verbose = TRUE) |> suppressMessages(),
-    c("genic","genic")
+    c("intragenic","intragenic")
   )
 
   # Throw an error if you supply empty strings as mutation_types
