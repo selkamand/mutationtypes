@@ -685,6 +685,9 @@ select_most_severe_consequence_pave_list <- function(pave_mutation_types_list, m
 select_most_severe_consequence_so <- function(so_mutation_types, missing_is_valid = FALSE){
   assertions::assert_character(so_mutation_types)
 
+  # Early return if empty vector supplied
+  if(length(so_mutation_types) == 0) return(character(0))
+
   so_mutation_types_list  <- strsplit(so_mutation_types, split = "&")
 
   select_most_severe_consequence_so_list(so_mutation_types_list, missing_is_valid = missing_is_valid)
@@ -712,6 +715,9 @@ select_most_severe_consequence_so <- function(so_mutation_types, missing_is_vali
 #' #> c("phased_synonymous", "frameshift_variant")
 select_most_severe_consequence_pave <- function(pave_mutation_types, missing_is_valid = FALSE){
   assertions::assert_character(pave_mutation_types)
+
+  # Early return if empty vector supplied
+  if(length(pave_mutation_types) == 0) return(character(0))
 
   pave_mutation_types_list  <- strsplit(pave_mutation_types, split = "&")
 
